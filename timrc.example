@@ -1,0 +1,17 @@
+# Change variables after liking and move the file to ~/.vimrc.
+# These are the default settings on Mac OS X. On GNU/Linux it's *_CMD=aplay.
+
+COUNTDOWN_CMD=afplay
+COUNTDOWN_ARG=./Timer\ Files/alarm.wav
+
+WORK_CMD=afplay
+WORK_ARG=./Timer\ Files/work.wav
+
+BREAK_CMD=afplay
+BREAK_ARG=./Timer\ Files/break.wav
+
+INTERVAL=15
+POMODORO_WORK=25
+POMODORO_BREAK=5
+POMODORO_STOP=4
+
