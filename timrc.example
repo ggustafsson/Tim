@@ -1,8 +1,10 @@
+# vim: ft=sh
+
 # Change variables after liking and move the file to ~/.vimrc.
 # These are the default settings on Mac OS X. On GNU/Linux it's *_CMD=aplay.
 
-COUNTDOWN_CMD=afplay
-COUNTDOWN_ARG=./Timer\ Files/alarm.wav
+TIMER_CMD=afplay
+TIMER_ARG=./Timer\ Files/alarm.wav
 
 WORK_CMD=afplay
 WORK_ARG=./Timer\ Files/work.wav
