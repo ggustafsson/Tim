@@ -14,6 +14,9 @@
 #BREAK_CMD=afplay
 #BREAK_ARG=~/.tim/break.wav
 
+#POMODORO_END_CMD=afplay
+#POMODORO_END_ARG=~/.tim/end.wav
+
 #INTERVAL=15
 #POMODORO_WORK=25
 #POMODORO_BREAK=5

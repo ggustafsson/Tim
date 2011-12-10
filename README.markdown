@@ -35,3 +35,6 @@ If you use Mac OS X you can put this in ~/.timrc:
 	BREAK_CMD=say
 	BREAK_ARG="take a little break"
 
+	POMODORO_END_CMD=say
+	POMODORO_END_ARG="working session is over. take a break"
+

@@ -10,7 +10,7 @@
 
 stty -echo # Disable display of keyboard input.
 
-VERSION=0.4
+VERSION=0.5
 FILENAME=$0:t # Get filename from full path.
 
 
@@ -35,9 +35,12 @@ fi
 [ -z $BREAK_CMD ] && BREAK_CMD=$COMMAND
 [ -z $BREAK_ARG ] && BREAK_ARG=~/.tim/break.wav
 
+[ -z $POMODORO_END_CMD ] && POMODORO_END_CMD=$COMMAND
+[ -z $POMODORO_END_ARG ] && POMODORO_END_CMD=~/.tim/end.wav
+
 [ -z $INTERVAL       ] && INTERVAL=15
-[ -z $POMODORO_WORK  ] && POMODORO_WORK=25
-[ -z $POMODORO_BREAK ] && POMODORO_BREAK=5
+[ -z $POMODORO_WORK  ] && POMODORO_WORK=1
+[ -z $POMODORO_BREAK ] && POMODORO_BREAK=1
 [ -z $POMODORO_STOP  ] && POMODORO_STOP=4
 
 
@@ -156,7 +159,7 @@ function pomodoro {
 	(( POMODORO_BREAK_IN_SECONDS = $POMODORO_BREAK * 60 ))
 
 	CURRENT_MODE=work
-	CURRENT_RUN=0
+	CURRENT_RUN=1
 	MINUTES_IN_SECONDS=$POMODORO_WORK_IN_SECONDS
 
 	echo "Starting timer. Pomodoro mode:
@@ -181,10 +184,14 @@ Start working now. Stop with Ctrl+C."
 
 			CURRENT_MODE=work
 			MINUTES_IN_SECONDS=$POMODORO_WORK_IN_SECONDS
-		fi
 
-		(( CURRENT_RUN = $CURRENT_RUN + 1 ))
+			(( CURRENT_RUN = $CURRENT_RUN + 1 ))
+		fi
 	done
+
+	sleep $MINUTES_IN_SECONDS
+	echo "\nWorking session is over!"
+	$POMODORO_END_CMD $POMODORO_END_ARG
 }
 
 
