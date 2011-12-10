@@ -10,8 +10,8 @@
 
 stty -echo # Disable display of keyboard input.
 
-VERSION=0.2
-FILENAME=$(echo $0 | sed 's/.*\///') # Get filename from full path.
+VERSION=0.3
+FILENAME=$0:t # Get filename from full path.
 
 
 ###############################################################################
@@ -51,13 +51,12 @@ fi
 # INFORMATION SECTION                                                         #
 ###############################################################################
 function usage {
-	echo "Usage: $FILENAME [OPTION]... [NUMBER]..."
-	echo "Try '--help' for more information."
+	echo "Usage: $FILENAME [OPTION]... [NUMBER]...
+Try '--help' for more information."
 }
 
 function help {
-<<'EOT'
-Usage: $FILENAME [OPTION]... [NUMBER]...
+	echo "Usage: $FILENAME [OPTION]... [NUMBER]...
 
  [NUMBER]                 wait [NUMBER] minutes before starting alarm.
  -i, --interval [NUMBER]  work [NUMBER] minutes and pause [NUMBER] minutes.
@@ -74,17 +73,16 @@ Examples:
   $FILENAME 5      # wait 5 minutes before starting alarm.
   $FILENAME -i 10  # work for 10 minutes and pause for 10 minutes.
   $FILENAME -i     # same as above but use the default/timrc setting.
-  $FILENAME -p     # pomodoro mode. using default/timrc settings.
-EOT
+  $FILENAME -p     # pomodoro mode. using default/timrc settings."
 }
 
 function version {
-	echo "Tim (Timer Script Improved) $VERSION\n"
+	echo "Tim (Timer Script Improved) $VERSION
 
-	echo "Web: http://ggustafsson.github.com/Timer-Script"
-	echo "Git: https://github.com/ggustafsson/Timer-Script-Improved\n"
+Web: http://ggustafsson.github.com/Timer-Script
+Git: https://github.com/ggustafsson/Timer-Script-Improved
 
-	echo "Written by Göran Gustafsson <gustafsson.g@gmail.com>."
+Written by Göran Gustafsson <gustafsson.g@gmail.com>."
 }
 
 
@@ -94,12 +92,13 @@ function version {
 function timer {
 	(( MINUTES_IN_SECONDS = $1 * 60 ))
 
-	echo -n "Waiting for $1 "
+	echo -n "Starting timer. Waiting for $1 "
 	if [[ $1 > 1 ]]; then
 		echo "minutes."
 	else
 		echo "minute."
 	fi
+	echo "Stop with Ctrl+C."
 
 	sleep $MINUTES_IN_SECONDS
 	echo -e "\n\033[1;31mALARM SET OFF!\033[0m"
@@ -127,7 +126,6 @@ function interval {
 	else
 		echo "minute."
 	fi
-
 	echo "Start working now. Stop with Ctrl+C."
 
 	while true; do
@@ -164,10 +162,10 @@ function pomodoro {
 	CURRENT_RUN=0
 	MINUTES_IN_SECONDS=$POMODORO_WORK_IN_SECONDS
 
-	echo "Starting timer. Pomodoro mode:"
-	echo "  Work $POMODORO_WORK min. Break $POMODORO_BREAK min. Stop after $POMODORO_STOP.\n"
+	echo "Starting timer. Pomodoro mode:
+ Work $POMODORO_WORK min. Break $POMODORO_BREAK min. Stop after $POMODORO_STOP.
 
-	echo "Start working now. Stop with Ctrl+C."
+Start working now. Stop with Ctrl+C."
 
 	while [[ $CURRENT_RUN < $POMODORO_STOP ]]; do
 		sleep $MINUTES_IN_SECONDS
@@ -202,23 +200,33 @@ function pomodoro {
 case $# in
 	1)
 		case $1 in
-			[0-9])           timer    $1 ;;
+			<->)
+				if [[ $1 > 0 ]]; then
+					timer $1
+				else
+					usage
+				fi
+			;;
 			-i | --interval) interval    ;;
 			-p | --pomodoro) pomodoro    ;;
 			-h | --help)     help        ;;
 			-v | --version)  version     ;;
 			*)
-				usage && return 1
+				usage
 			;;
 		esac
 	;;
 	2)
-		if ([[ $1 == -i ]] && [[ $2 == [0-9] ]]); then
-			interval $2
+		if ([[ $1 == -i ]] && [[ $2 == <-> ]]); then
+			if [[ $2 > 0 ]]; then
+				interval $2
+			else
+				usage
+			fi
 		else
-			usage && return 1
+			usage
 		fi
 	;;
-	*) usage && return 1 ;;
+	*) usage ;;
 esac
 

@@ -7,7 +7,7 @@ Description
 
 Usage
 -----
-**./tim.sh --help**
+	./tim.sh --help
 
 Configuration
 -------------
