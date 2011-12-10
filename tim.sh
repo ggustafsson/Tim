@@ -2,7 +2,7 @@
 # vim: ft=zsh
 
 ###############################################################################
-# Written by Göran Gustafsson <gustafsson.g@gmail.com>                        #
+# Written by Göran Gustafsson <gustafsson.g@gmail.com>.                       #
 #                                                                             #
 # Web: http://ggustafsson.github.com/Timer-Script-Improved                    #
 # Git: https://github.com/ggustafsson/Timer-Script-Improved                   #
@@ -10,7 +10,7 @@
 
 stty -echo # Disable display of keyboard input.
 
-VERSION=0.3
+VERSION=0.4
 FILENAME=$0:t # Get filename from full path.
 
 
@@ -131,10 +131,7 @@ function interval {
 	while true; do
 		sleep $MINUTES_IN_SECONDS
 
-		if [ -z $LINEBREAK ]; then
-			LINEBREAK=0
-			echo
-		fi
+		[ -z $LINEBREAK ] && LINEBREAK=0 && echo
 
 		if [[ $CURRENT_MODE == work ]]; then
 			echo "\033[1;32mTAKE A LITTLE BREAK!\033[0m"
@@ -170,10 +167,7 @@ Start working now. Stop with Ctrl+C."
 	while [[ $CURRENT_RUN < $POMODORO_STOP ]]; do
 		sleep $MINUTES_IN_SECONDS
 
-		if [ -z $LINEBREAK ]; then
-			LINEBREAK=0
-			echo
-		fi
+		[ -z $LINEBREAK ] && LINEBREAK=0 && echo
 
 		if [[ $CURRENT_MODE == work ]]; then
 			echo "\033[1;32mTAKE A LITTLE BREAK!\033[0m"
@@ -200,26 +194,26 @@ Start working now. Stop with Ctrl+C."
 case $# in
 	1)
 		case $1 in
-			<->)
+			<->) # Check if $1 is integer.
 				if [[ $1 > 0 ]]; then
-					timer $1
+					timer $1 # Send argument $1 to function timer.
 				else
 					usage
 				fi
 			;;
-			-i | --interval) interval    ;;
-			-p | --pomodoro) pomodoro    ;;
-			-h | --help)     help        ;;
-			-v | --version)  version     ;;
+			-i | --interval) interval ;;
+			-p | --pomodoro) pomodoro ;;
+			-h | --help)     help     ;;
+			-v | --version)  version  ;;
 			*)
 				usage
 			;;
 		esac
 	;;
 	2)
-		if ([[ $1 == -i ]] && [[ $2 == <-> ]]); then
+		if ([[ $1 == -i ]] && [[ $2 == <-> ]]); then # Check if $2 is integer.
 			if [[ $2 > 0 ]]; then
-				interval $2
+				interval $2 # Send argument $2 to function interval.
 			else
 				usage
 			fi
