@@ -27,18 +27,24 @@ fi
 
 # If these variables are not found in ~/.timrc then set them now.
 [ -z $TIMER_CMD ] && TIMER_CMD=$COMMAND
-[ -z $TIMER_ARG ] && TIMER_ARG=./audio_files/alarm.wav
+[ -z $TIMER_ARG ] && TIMER_ARG=~/.tim/alarm.wav
 
 [ -z $WORK_CMD ] && WORK_CMD=$COMMAND
-[ -z $WORK_ARG ] && WORK_ARG=./audio_files/work.wav
+[ -z $WORK_ARG ] && WORK_ARG=~/.tim/work.wav
 
 [ -z $BREAK_CMD ] && BREAK_CMD=$COMMAND
-[ -z $BREAK_ARG ] && BREAK_ARG=./audio_files/break.wav
+[ -z $BREAK_ARG ] && BREAK_ARG=~/.tim/break.wav
 
 [ -z $INTERVAL       ] && INTERVAL=15
 [ -z $POMODORO_WORK  ] && POMODORO_WORK=25
 [ -z $POMODORO_BREAK ] && POMODORO_BREAK=5
 [ -z $POMODORO_STOP  ] && POMODORO_STOP=4
+
+
+###############################################################################
+# ENVIRONMENT CHECK SECTION                                                   #
+###############################################################################
+# Check if commands, files etc exist here.
 
 
 ###############################################################################
@@ -50,24 +56,26 @@ function usage {
 }
 
 function help {
-	echo "Usage: $FILENAME [OPTION]... [NUMBER]...\n"
+<<'EOT'
+Usage: $FILENAME [OPTION]... [NUMBER]...
 
-	echo " [NUMBER]                 wait [NUMBER] minutes before starting alarm."
-	echo " -i, --interval [NUMBER]  work [NUMBER] minutes and pause [NUMBER] minutes."
-	echo "                            defaults to 15 minutes work and pause."
-	echo " -p, --pomodoro           work x minutes and pause x minutes. run x times."
-	echo "                            defaults to 25 minutes work, 5 minutes break"
-	echo "                            and stop after 4 times."
-	echo "                            <http://en.wikipedia.org/wiki/Pomodoro_Technique>"
-	echo " -h, --help               display this help and exit."
-	echo " -v, --version            output version information and exit.\n"
+ [NUMBER]                 wait [NUMBER] minutes before starting alarm.
+ -i, --interval [NUMBER]  work [NUMBER] minutes and pause [NUMBER] minutes.
+                            defaults to 15 minutes work and pause.
+ -p, --pomodoro           work x minutes and pause x minutes. run x times.
+                            defaults to 25 minutes work, 5 minutes break and
+                            stop after 4 times.
+                            <http://en.wikipedia.org/wiki/Pomodoro_Technique>
+ -h, --help               display this help and exit.
+ -v, --version            output version information and exit.
 
-	echo "Examples:\n"
+Examples:
 
-	echo "  $FILENAME 5      # wait 5 minutes before starting alarm."
-	echo "  $FILENAME -i 10  # work for 10 minutes and pause for 10 minutes."
-	echo "  $FILENAME -i     # same as above but use the default/timrc setting."
-	echo "  $FILENAME -p     # pomodoro mode. using default/timrc settings."
+  $FILENAME 5      # wait 5 minutes before starting alarm.
+  $FILENAME -i 10  # work for 10 minutes and pause for 10 minutes.
+  $FILENAME -i     # same as above but use the default/timrc setting.
+  $FILENAME -p     # pomodoro mode. using default/timrc settings.
+EOT
 }
 
 function version {
@@ -94,7 +102,8 @@ function timer {
 	fi
 
 	sleep $MINUTES_IN_SECONDS
-	echo -n "\nALARM SET OFF!"
+	echo -e "\n\033[1;31mALARM SET OFF!\033[0m"
+
 	$TIMER_CMD $TIMER_ARG
 }
 
@@ -118,18 +127,24 @@ function interval {
 	else
 		echo "minute."
 	fi
-	echo "Start working now."
+
+	echo "Start working now. Stop with Ctrl+C."
 
 	while true; do
 		sleep $MINUTES_IN_SECONDS
 
+		if [ -z $LINEBREAK ]; then
+			LINEBREAK=0
+			echo
+		fi
+
 		if [[ $CURRENT_MODE == work ]]; then
-			echo -n "\nTAKE A LITTLE BREAK!"
+			echo "\033[1;32mTAKE A LITTLE BREAK!\033[0m"
 			$BREAK_CMD $BREAK_ARG
 
 			CURRENT_MODE=break
 		else
-			echo -n "\nSTART WORKING AGAIN!"
+			echo "\033[1;31mSTART WORKING AGAIN!\033[0m"
 			$WORK_CMD $WORK_ARG
 
 			CURRENT_MODE=work
@@ -146,27 +161,37 @@ function pomodoro {
 	(( POMODORO_BREAK_IN_SECONDS = $POMODORO_BREAK * 60 ))
 
 	CURRENT_MODE=work
+	CURRENT_RUN=0
 	MINUTES_IN_SECONDS=$POMODORO_WORK_IN_SECONDS
 
-	echo "Starting timer. Pomodoro mode."
-	echo "Start working now."
+	echo "Starting timer. Pomodoro mode:"
+	echo "  Work $POMODORO_WORK min. Break $POMODORO_BREAK min. Stop after $POMODORO_STOP.\n"
 
-	while true; do
+	echo "Start working now. Stop with Ctrl+C."
+
+	while [[ $CURRENT_RUN < $POMODORO_STOP ]]; do
 		sleep $MINUTES_IN_SECONDS
 
+		if [ -z $LINEBREAK ]; then
+			LINEBREAK=0
+			echo
+		fi
+
 		if [[ $CURRENT_MODE == work ]]; then
-			echo -n "\nTAKE A LITTLE BREAK!"
+			echo "\033[1;32mTAKE A LITTLE BREAK!\033[0m"
 			$BREAK_CMD $BREAK_ARG
 
 			CURRENT_MODE=break
 			MINUTES_IN_SECONDS=$POMODORO_BREAK_IN_SECONDS
 		else
-			echo -n "\nSTART WORKING AGAIN!"
+			echo "\033[1;31mSTART WORKING AGAIN!\033[0m"
 			$WORK_CMD $WORK_ARG
 
 			CURRENT_MODE=work
 			MINUTES_IN_SECONDS=$POMODORO_WORK_IN_SECONDS
 		fi
+
+		(( CURRENT_RUN = $CURRENT_RUN + 1 ))
 	done
 }
 

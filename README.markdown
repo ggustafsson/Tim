@@ -20,16 +20,18 @@ not going to waste my time.
 
 When using the default settings Tim depends on:
 
- Mac OS X: **afplay**.
-GNU/Linux: **aplay**.
+- Mac OS X:
+  - **afplay**
+- GNU/Linux:
+  - **aplay**
 
 Tips
 ----
 If you use Mac OS X you can put this in ~/.timrc:
 
-WORK_CMD=say
-WORK_ARG="start working again"
+	WORK_CMD=say
+	WORK_ARG="start working again"
 
-BREAK_CMD=say
-BREAK_ARG="take a little break"
+	BREAK_CMD=say
+	BREAK_ARG="take a little break"
 
