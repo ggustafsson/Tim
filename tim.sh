@@ -104,10 +104,11 @@ Examples:
 function version {
 	echo "Tim (Timer Script Improved) $VERSION
 
-Web: http://ggustafsson.github.com/Timer-Script
-Git: https://github.com/ggustafsson/Timer-Script-Improved
+ Web: http://ggustafsson.github.com/Timer-Script-Improved
+ Git: https://github.com/ggustafsson/Timer-Script-Improved
 
-Written by Göran Gustafsson <gustafsson.g@gmail.com>."
+Written by Göran Gustafsson <gustafsson.g@gmail.com>.
+Released under the BSD 2-Clause license."
 }
 
 
