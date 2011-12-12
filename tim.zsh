@@ -1,5 +1,4 @@
 #!/usr/bin/env zsh
-# vim: ft=zsh
 
 # Copyright (c) 2011, Göran Gustafsson. All rights reserved.
 #
