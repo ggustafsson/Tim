@@ -40,6 +40,8 @@ If you use Mac OS X you can put this in ~/.timrc:
 
 License
 -------
+Released under the BSD 2-Clause License.
+
 	Copyright (c) 2011, Göran Gustafsson. All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
