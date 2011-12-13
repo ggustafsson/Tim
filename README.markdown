@@ -15,8 +15,7 @@ Read the file **timrc.example**.
 
 Dependencies
 ------------
-You need to have Zsh installed to run this. Port it to Bash if you want, I'm
-not going to waste my time.
+You need to have Zsh installed to run this.
 
 When using the default settings Tim depends on:
 
@@ -28,6 +27,8 @@ When using the default settings Tim depends on:
 Tips
 ----
 If you use Mac OS X you can put this in ~/.timrc:
+
+	NO_FILE_CHECK=1
 
 	WORK_CMD=say
 	WORK_ARG="start working again"

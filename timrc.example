@@ -5,6 +5,10 @@
 # These are the default settings on Mac OS X. On GNU/Linux it's *_CMD=aplay.  #
 ###############################################################################
 
+#NO_FILE_CHECK=0 # This MUST be set to 1 if you want to put something other
+                 # than filenames in *_ARG. For example if you use *_CMD=say
+                 # and *_ARG="say this text".
+
 #TIMER_CMD=afplay
 #TIMER_ARG=~/.tim/alarm.wav
 #TIMER_REPEAT_ALARM=0
@@ -15,10 +19,11 @@
 #BREAK_CMD=afplay
 #BREAK_ARG=~/.tim/break.wav
 
+#INTERVAL=15
+
 #POMODORO_END_CMD=afplay
 #POMODORO_END_ARG=~/.tim/end.wav
 
-#INTERVAL=15
 #POMODORO_WORK=25
 #POMODORO_BREAK=5
 #POMODORO_STOP=4

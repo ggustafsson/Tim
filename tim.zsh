@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/zsh
 
 # Copyright (c) 2011, Göran Gustafsson. All rights reserved.
 #
@@ -31,9 +31,9 @@
 
 stty -echo # Disable display of keyboard input.
 
-VERSION=0.5
+VERSION=0.6
 FILENAME=$0:t  # Get filename from full path.
-DIRECTORY=$0:h # Directory the script is in. This doesn't follow symlinks!!
+DIRECTORY=$0:A:h # Directory the script is in.
 
 ###############################################################################
 # CONFIGURATION SECTION                                                       #
@@ -84,16 +84,35 @@ if [ -z $POMODORO_END_ARG ]; then
 	fi
 fi
 
-[ -z $INTERVAL       ] && INTERVAL=15
-[ -z $POMODORO_WORK  ] && POMODORO_WORK=1
-[ -z $POMODORO_BREAK ] && POMODORO_BREAK=1
+[ -z $POMODORO_WORK  ] && POMODORO_WORK=25
+[ -z $POMODORO_BREAK ] && POMODORO_BREAK=5
 [ -z $POMODORO_STOP  ] && POMODORO_STOP=4
+
+[ -z $INTERVAL      ] && INTERVAL=15
+[ -z $NO_FILE_CHECK ] && NO_FILE_CHECK=0
 
 
 ###############################################################################
 # ENVIRONMENT CHECK SECTION                                                   #
 ###############################################################################
-# Check if commands, files etc exist here.
+ALL_COMMANDS=(TIMER_CMD WORK_CMD BREAK_CMD POMODORO_END_CMD)
+ALL_ARGUMENTS=(TIMER_ARG WORK_ARG BREAK_ARG POMODORO_END_ARG)
+
+for x in $ALL_COMMANDS; do
+	if ! $(type -p ${(P)x} > /dev/null); then
+		echo "$x: Command '${(P)x}' doesn't exist." && ERROR=1
+	fi
+done
+
+if [[ ! $NO_FILE_CHECK == 1 ]]; then
+	for x in $ALL_ARGUMENTS; do
+		if [ ! -f ${(P)x} ]; then
+			echo "$x: File '${(P)x}' doesn't exist." && ERROR=1
+		fi
+	done
+fi
+
+[[ ! -z $ERROR ]] && return 1
 
 
 ###############################################################################
@@ -128,8 +147,8 @@ Examples:
 function version {
 	echo "Tim (Timer Script Improved) $VERSION
 
- Web: http://ggustafsson.github.com/Timer-Script-Improved
- Git: https://github.com/ggustafsson/Timer-Script-Improved
+Web: http://ggustafsson.github.com/Timer-Script-Improved
+Git: https://github.com/ggustafsson/Timer-Script-Improved
 
 Written by Göran Gustafsson <gustafsson.g@gmail.com>.
 Released under the BSD 2-Clause license."
@@ -249,24 +268,56 @@ Start working now. Stop with Ctrl+C."
 
 
 ###############################################################################
+# DEBUG SECTION (DISPLAY VARIABLES)                                           #
+###############################################################################
+function debug {
+	echo "FILENAME: $FILENAME"
+	echo "DIRECTORY: $DIRECTORY"
+	echo "VERSION: $VERSION"
+	echo "ERROR: $ERROR"
+
+	echo "TIMER_CMD: $TIMER_CMD"
+	echo "TIMER_ARG: $TIMER_ARG"
+	echo "TIMER_REPEAT_ALARM: $TIMER_REPEAT_ALARM"
+
+	echo "WORK_CMD: $WORK_CMD"
+	echo "WORK_ARG: $WORK_ARG"
+
+	echo "BREAK_CMD: $BREAK_CMD"
+	echo "BREAK_ARG: $BREAK_ARG"
+
+	echo "POMODORO_END_CMD: $POMODORO_END_CMD"
+	echo "POMODORO_END_ARG: $POMODORO_END_ARG"
+
+	echo "INTERVAL: $INTERVAL"
+	echo "NO_FILE_CHECK: $NO_FILE_CHECK"
+	echo "POMODORO_BREAK: $POMODORO_BREAK"
+	echo "POMODORO_STOP: $POMODORO_STOP"
+	echo "POMODORO_WORK: $POMODORO_WORK"
+}
+
+
+###############################################################################
 # OPTIONS AND EXECUTION SECTION                                               #
 ###############################################################################
 case $# in
+	0) usage ;;
 	1)
 		case $1 in
 			<->) # Check if $1 is integer.
 				if [[ $1 > 0 ]]; then
 					timer $1 # Send argument $1 to function timer.
 				else
-					usage
+					usage && return 1
 				fi
 			;;
+			wtf)             debug    ;;
 			-i | --interval) interval ;;
 			-p | --pomodoro) pomodoro ;;
 			-h | --help)     help     ;;
 			-v | --version)  version  ;;
 			*)
-				usage
+				usage && return 1
 			;;
 		esac
 	;;
@@ -275,12 +326,12 @@ case $# in
 			if [[ $2 > 0 ]]; then
 				interval $2 # Send argument $2 to function interval.
 			else
-				usage
+				usage && return 1
 			fi
 		else
-			usage
+			usage && return 1
 		fi
 	;;
-	*) usage ;;
+	*) usage && return 1 ;;
 esac
 
