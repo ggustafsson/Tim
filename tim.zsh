@@ -55,7 +55,7 @@ if [ -z $TIMER_ARG ]; then
 		TIMER_ARG=$DIRECTORY/alarm.wav
 	fi
 fi
-[ -z $TIMER_REPEAT ] && TIMER_REPEAT=0
+[ -z $TIMER_REPEAT_ALARM ] && TIMER_REPEAT_ALARM=0
 
 [ -z $WORK_CMD ] && WORK_CMD=$COMMAND
 if [ -z $WORK_ARG ]; then
