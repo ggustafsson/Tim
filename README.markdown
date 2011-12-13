@@ -3,11 +3,11 @@ Tim (Timer Script Improved)
 
 Description
 -----------
-
+Terminal countdown timer with several modes written in Zsh shell script.
 
 Usage
 -----
-	./tim.sh --help
+	./tim.zsh --help
 
 Configuration
 -------------
