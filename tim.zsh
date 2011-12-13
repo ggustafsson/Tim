@@ -32,8 +32,8 @@
 stty -echo # Disable display of keyboard input.
 
 VERSION=0.5
-FILENAME=$0:t # Get filename from full path.
-
+FILENAME=$0:t  # Get filename from full path.
+DIRECTORY=$0:h # Directory the script is in. This doesn't follow symlinks!!
 
 ###############################################################################
 # CONFIGURATION SECTION                                                       #
@@ -48,16 +48,40 @@ fi
 
 # If these variables are not found in ~/.timrc then set them now.
 [ -z $TIMER_CMD ] && TIMER_CMD=$COMMAND
-[ -z $TIMER_ARG ] && TIMER_ARG=~/.tim/alarm.wav
+if [ -z $TIMER_ARG ]; then
+	if [ -f ~/.tim/alarm.wav ]; then
+		TIMER_ARG=~/.tim/alarm.wav
+	elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
+		TIMER_ARG=$DIRECTORY/alarm.wav
+	fi
+fi
 
 [ -z $WORK_CMD ] && WORK_CMD=$COMMAND
-[ -z $WORK_ARG ] && WORK_ARG=~/.tim/work.wav
+if [ -z $WORK_ARG ]; then
+	if [ -f ~/.tim/work.wav ]; then
+		WORK_ARG=~/.tim/work.wav
+	elif [ -f $DIRECTORY/audio_files/work.wav ]; then
+		WORK_ARG=$DIRECTORY/audio_files/work.wav
+	fi
+fi
 
 [ -z $BREAK_CMD ] && BREAK_CMD=$COMMAND
-[ -z $BREAK_ARG ] && BREAK_ARG=~/.tim/break.wav
+if [ -z $BREAK_ARG ]; then
+	if [ -f ~/.tim/break.wav ]; then
+		BREAK_ARG=~/.tim/break.wav
+	elif [ -f $DIRECTORY/audio_files/break.wav ]; then
+		BREAK_ARG=$DIRECTORY/audio_files/break.wav
+	fi
+fi
 
 [ -z $POMODORO_END_CMD ] && POMODORO_END_CMD=$COMMAND
-[ -z $POMODORO_END_ARG ] && POMODORO_END_CMD=~/.tim/end.wav
+if [ -z $POMODORO_END_ARG ]; then
+	if [ -f ~/.tim/alarm.wav ]; then
+		POMODORO_END_ARG=~/.tim/alarm.wav
+	elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
+		POMODORO_END_ARG=$DIRECTORY/audio_files/alarm.wav
+	fi
+fi
 
 [ -z $INTERVAL       ] && INTERVAL=15
 [ -z $POMODORO_WORK  ] && POMODORO_WORK=1
@@ -82,22 +106,22 @@ Try '--help' for more information."
 function help {
 	echo "Usage: $FILENAME [OPTION]... [NUMBER]...
 
-  [NUMBER]                 wait [NUMBER] minutes before starting alarm.
-  -i, --interval [NUMBER]  work [NUMBER] minutes and pause [NUMBER] minutes.
-                             defaults to 15 minutes work and pause.
-  -p, --pomodoro           work x minutes and pause x minutes. run x times.
-                             defaults to 25 minutes work, 5 minutes break and
-                             stop after 4 times.
-                             <http://en.wikipedia.org/wiki/Pomodoro_Technique>
-  -h, --help               display this help and exit.
-  -v, --version            output version information and exit.
+  [NUMBER]                 Wait [NUMBER] minutes before starting alarm.
+  -i, --interval [NUMBER]  Work [NUMBER] minutes and pause [NUMBER] minutes.
+                            (Default: 15 minutes work and pause.)
+  -p, --pomodoro           Work X minutes and pause X minutes. Run X times.
+                            (Default: 25 minutes work, 5 minutes break and
+                             stop after 4 times.)
+                            <http://en.wikipedia.org/wiki/Pomodoro_Technique>
+  -h, --help               Display this help and exit.
+  -v, --version            Output version information and exit.
 
 Examples:
 
-  $FILENAME 5      # wait 5 minutes before starting alarm.
-  $FILENAME -i 10  # work for 10 minutes and pause for 10 minutes.
-  $FILENAME -i     # same as above but use the default/timrc setting.
-  $FILENAME -p     # pomodoro mode. using default/timrc settings."
+  $FILENAME 5      # Wait 5 minutes before starting alarm.
+  $FILENAME -i 10  # Work for 10 minutes and pause for 10 minutes.
+  $FILENAME -i     # Same as above but use the timrc (or default) setting.
+  $FILENAME -p     # Pomodoro mode. Using timrc (or default) settings."
 }
 
 function version {
