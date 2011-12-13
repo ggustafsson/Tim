@@ -55,6 +55,7 @@ if [ -z $TIMER_ARG ]; then
 		TIMER_ARG=$DIRECTORY/alarm.wav
 	fi
 fi
+[ -z $TIMER_REPEAT ] && TIMER_REPEAT=0
 
 [ -z $WORK_CMD ] && WORK_CMD=$COMMAND
 if [ -z $WORK_ARG ]; then
@@ -152,7 +153,13 @@ function timer {
 	sleep $MINUTES_IN_SECONDS
 	echo -e "\n\033[1;31mALARM SET OFF!\033[0m"
 
-	$TIMER_CMD $TIMER_ARG
+	if [[ $TIMER_REPEAT_ALARM == 1 ]]; then
+		while true; do
+			$TIMER_CMD $TIMER_ARG
+		done
+	else
+		$TIMER_CMD $TIMER_ARG
+	fi
 }
 
 

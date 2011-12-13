@@ -7,6 +7,7 @@
 
 #TIMER_CMD=afplay
 #TIMER_ARG=~/.tim/alarm.wav
+#TIMER_REPEAT_ALARM=0
 
 #WORK_CMD=afplay
 #WORK_ARG=~/.tim/work.wav
