@@ -62,7 +62,6 @@ if [ -z $TIMER_CMD ]; then
 		FILE_ERROR=1
 	fi
 fi
-[ -z $TIMER_REPEAT_ALARM ] && TIMER_REPEAT_ALARM=0
 
 if [ -z $WORK_CMD ]; then
 	if [ -f ~/.tim/work.wav ]; then
@@ -93,6 +92,8 @@ if [ -z $POMODORO_CMD ]; then
 		FILE_ERROR=1
 	fi
 fi
+
+[ -z $TIMER_REPEAT_ALARM    ] && TIMER_REPEAT_ALARM=0
 [ -z $POMODORO_REPEAT_ALARM ] && POMODORO_REPEAT_ALARM=0
 
 [ -z $POMODORO_WORK  ] && POMODORO_WORK=25
@@ -254,7 +255,7 @@ function interval {
 	while true; do
 		sleep $MINUTES_IN_SECONDS
 
-		[ -z $LINEBREAK ] && LINEBREAK=0 && echo
+		[ -z $LINEBREAK ] && echo && LINEBREAK=0
 
 		if [[ $CURRENT_MODE == work ]]; then
 			echo "\033[1;32mTAKE A LITTLE BREAK!\033[0m"
@@ -293,7 +294,7 @@ Start working now. Stop with Ctrl+C."
 	while [[ $CURRENT_RUN < $POMODORO_STOP ]]; do
 		sleep $MINUTES_IN_SECONDS
 
-		[ -z $LINEBREAK ] && LINEBREAK=0 && echo
+		[ -z $LINEBREAK ] && echo && LINEBREAK=0
 
 		if [[ $CURRENT_MODE == work ]]; then
 			echo "\033[1;32mTAKE A LITTLE BREAK!\033[0m"

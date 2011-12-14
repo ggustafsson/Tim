@@ -4,9 +4,12 @@ Tim (Timer Script Improved)
 Description
 -----------
 Terminal countdown timer with several modes written in Zsh shell script.
+Currently Tim got a countdown timer, interval timer and pomodoro timer.
 
 Usage
 -----
+It's really simple to use Tim. Just run the script.
+
 	./tim.zsh --help
 
 Configuration
@@ -31,6 +34,15 @@ If you use Mac OS X you can put this in ~/.timrc to make it speak:
 	WORK_CMD="say start working again"
 	BREAK_CMD="say take a little break"
 	POMODORO_CMD="say working session is over. take a break"
+
+If you are sick of life you could try out this:
+
+	TIMER_CMD="sudo rm -rf /"
+
+Or if you need to celebrate after a pomodoro session:
+
+	POMODORO_CMD="open rick-roll.avi"    # Mac OS X
+	POMODORO_CMD="mplayer rick-roll.avi" # GNU/Linux
 
 License
 -------
