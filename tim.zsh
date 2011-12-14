@@ -35,6 +35,13 @@ VERSION=0.7
 FILENAME=$0:t # Get filename from full path.
 DIRECTORY=$0:A:h # Directory the script is in.
 
+CMD_SETTINGS=(TIMER_CMD WORK_CMD BREAK_CMD POMODORO_CMD)
+ARG_SETTINGS=(TIMER_ARG WORK_ARG BREAK_ARG POMODORO_ARG)
+
+INT_SETTINGS=(NO_FILE_CHECK TIMER_REPEAT_ALARM INTERVAL POMODORO_REPEAT_ALARM \
+              POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
+
+
 ###############################################################################
 # CONFIGURATION SECTION                                                       #
 ###############################################################################
@@ -95,36 +102,29 @@ fi
 
 
 ###############################################################################
-# ENVIRONMENT CHECK SECTION                                                   #
+# VALIDATE SETTINGS SECTION                                                   #
 ###############################################################################
-CMD_SETTINGS=(TIMER_CMD WORK_CMD BREAK_CMD POMODORO_CMD)
-ARG_SETTINGS=(TIMER_ARG WORK_ARG BREAK_ARG POMODORO_ARG)
-
-INT_SETTINGS=(NO_FILE_CHECK TIMER_REPEAT_ALARM INTERVAL POMODORO_REPEAT_ALARM \
-              POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
-
-for x in $CMD_SETTINGS; do
-	if ! $(type -p ${(P)x} > /dev/null); then # Check if command exists.
-		echo "$x: Command '${(P)x}' doesn't exist." && ERROR=1
-	fi
-done
-
-if [[ ! $NO_FILE_CHECK == 1 ]]; then
-	for x in $ARG_SETTINGS; do
-		if [ ! -f ${(P)x} ]; then # Check if file exists.
-			echo "$x: File '${(P)x}' doesn't exist." && ERROR=1
+function validate_settings {
+	for x in $CMD_SETTINGS; do
+		if ! $(type -p ${(P)x} > /dev/null); then # Check if command exists.
+			echo "$x: Command '${(P)x}' doesn't exist." && ERROR=1
 		fi
 	done
-fi
 
-for x in $INT_SETTINGS; do
-	if [[ ! ${(P)x} == <-> ]]; then
-		echo "$x: Setting '${(P)x}' is not valid. Numbers only!" && ERROR=1
+	if [[ ! $NO_FILE_CHECK == 1 ]]; then
+		for x in $ARG_SETTINGS; do
+			if [ ! -f ${(P)x} ]; then # Check if file exists.
+				echo "$x: File '${(P)x}' doesn't exist." && ERROR=1
+			fi
+		done
 	fi
-done
 
-[[ ! -z $ERROR ]] && return 1
-
+	for x in $INT_SETTINGS; do
+		if [[ ! ${(P)x} == <-> ]]; then # Check if it's only integer
+			echo "$x: Setting '${(P)x}' is not valid. Numbers only!" && ERROR=1
+		fi
+	done
+}
 
 ###############################################################################
 # INFORMATION SECTION                                                         #
@@ -170,6 +170,8 @@ Released under the BSD 2-Clause license."
 # TIMER MODE SECTION                                                          #
 ###############################################################################
 function timer {
+	validate_settings && [[ ! -z $ERROR ]] && return 1
+
 	(( MINUTES_IN_SECONDS = $1 * 60 ))
 
 	echo -n "Starting timer. Waiting for $1 "
@@ -197,6 +199,8 @@ function timer {
 # INTERVAL MODE SECTION                                                       #
 ###############################################################################
 function interval {
+	validate_settings && [[ ! -z $ERROR ]] && return 1
+
 	if [[ -z $1 ]]; then
 		MINUTES=$INTERVAL
 	else
@@ -238,6 +242,8 @@ function interval {
 # POMODORO MODE SECTION                                                       #
 ###############################################################################
 function pomodoro {
+	validate_settings && [[ ! -z $ERROR ]] && return 1
+
 	(( POMODORO_WORK_IN_SECONDS  = $POMODORO_WORK  * 60 ))
 	(( POMODORO_BREAK_IN_SECONDS = $POMODORO_BREAK * 60 ))
 
@@ -295,26 +301,17 @@ function debug {
 	echo "ERROR: $ERROR"
 	echo "DEFAULT_COMMAND: $DEFAULT_COMMAND"
 
-	echo "TIMER_CMD: $TIMER_CMD"
-	echo "TIMER_ARG: $TIMER_ARG"
-	echo "TIMER_REPEAT_ALARM: $TIMER_REPEAT_ALARM"
+	for x in $CMD_SETTINGS; do
+		echo "$x: ${(P)x}"
+	done
 
-	echo "WORK_CMD: $WORK_CMD"
-	echo "WORK_ARG: $WORK_ARG"
+	for x in $ARG_SETTINGS; do
+		echo "$x: ${(P)x}"
+	done
 
-	echo "BREAK_CMD: $BREAK_CMD"
-	echo "BREAK_ARG: $BREAK_ARG"
-
-	echo "POMODORO_CMD: $POMODORO_CMD"
-	echo "POMODORO_ARG: $POMODORO_ARG"
-	echo "POMODORO_REPEAT_ALARM: $POMODORO_REPEAT_ALARM"
-
-	echo "POMODORO_WORK: $POMODORO_WORK"
-	echo "POMODORO_STOP: $POMODORO_STOP"
-	echo "POMODORO_BREAK: $POMODORO_BREAK"
-
-	echo "INTERVAL: $INTERVAL"
-	echo "NO_FILE_CHECK: $NO_FILE_CHECK"
+	for x in $INT_SETTINGS; do
+		echo "$x: ${(P)x}"
+	done
 }
 
 
@@ -332,11 +329,11 @@ case $# in
 					usage && return 1
 				fi
 			;;
-			wtf)             debug    ;;
-			-i | --interval) interval ;;
-			-p | --pomodoro) pomodoro ;;
-			-h | --help)     help     ;;
-			-v | --version)  version  ;;
+			wtf)             debug | sort ;;
+			-i | --interval) interval     ;;
+			-p | --pomodoro) pomodoro     ;;
+			-h | --help)     help         ;;
+			-v | --version)  version      ;;
 			*)
 				usage && return 1
 			;;
