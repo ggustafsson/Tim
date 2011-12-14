@@ -3,6 +3,8 @@
 ###############################################################################
 # Change variables after liking and move the file to ~/.timrc.                #
 # These are the default settings on Mac OS X. On GNU/Linux it's *_CMD=aplay.  #
+# *_ARG defaults to ~/.tim/FILENAME.wav if the file exists or else Tim checks #
+# for the files under the scripts $PWD in the directory audio_files.          #
 ###############################################################################
 
 #NO_FILE_CHECK=0 # This MUST be set to 1 if you want to put something other
@@ -21,8 +23,9 @@
 
 #INTERVAL=15
 
-#POMODORO_END_CMD=afplay
-#POMODORO_END_ARG=~/.tim/end.wav
+#POMODORO_CMD=afplay
+#POMODORO_ARG=~/.tim/end.wav
+#POMODORO_REPEAT_ALARM=0
 
 #POMODORO_WORK=25
 #POMODORO_BREAK=5

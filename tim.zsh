@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 # Copyright (c) 2011, Göran Gustafsson. All rights reserved.
 #
@@ -31,8 +31,8 @@
 
 stty -echo # Disable display of keyboard input.
 
-VERSION=0.6
-FILENAME=$0:t  # Get filename from full path.
+VERSION=0.7
+FILENAME=$0:t # Get filename from full path.
 DIRECTORY=$0:A:h # Directory the script is in.
 
 ###############################################################################
@@ -41,23 +41,24 @@ DIRECTORY=$0:A:h # Directory the script is in.
 [ -f ~/.timrc ] && source ~/.timrc # Lazy fix. This is just temporary.
 
 if [[ $OSTYPE == darwin* ]]; then
-	COMMAND=afplay # Comes with Mac OS X.
+	DEFAULT_COMMAND=afplay # Comes with Mac OS X.
 else
-	COMMAND=aplay  # Comes with alsa-utils.
+	DEFAULT_COMMAND=aplay # Comes with alsa-utils.
 fi
 
-# If these variables are not found in ~/.timrc then set them now.
-[ -z $TIMER_CMD ] && TIMER_CMD=$COMMAND
+# If these variables are not found in ~/.timrc then set them. Tim checks for
+# audio files in this order: 1. ~/.timrc, 2. ~/.tim folder and 3. script $PWD.
+[ -z $TIMER_CMD ] && TIMER_CMD=$DEFAULT_COMMAND
 if [ -z $TIMER_ARG ]; then
 	if [ -f ~/.tim/alarm.wav ]; then
 		TIMER_ARG=~/.tim/alarm.wav
 	elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
-		TIMER_ARG=$DIRECTORY/alarm.wav
+		TIMER_ARG=$DIRECTORY/audio_files/alarm.wav
 	fi
 fi
 [ -z $TIMER_REPEAT_ALARM ] && TIMER_REPEAT_ALARM=0
 
-[ -z $WORK_CMD ] && WORK_CMD=$COMMAND
+[ -z $WORK_CMD ] && WORK_CMD=$DEFAULT_COMMAND
 if [ -z $WORK_ARG ]; then
 	if [ -f ~/.tim/work.wav ]; then
 		WORK_ARG=~/.tim/work.wav
@@ -66,7 +67,7 @@ if [ -z $WORK_ARG ]; then
 	fi
 fi
 
-[ -z $BREAK_CMD ] && BREAK_CMD=$COMMAND
+[ -z $BREAK_CMD ] && BREAK_CMD=$DEFAULT_COMMAND
 if [ -z $BREAK_ARG ]; then
 	if [ -f ~/.tim/break.wav ]; then
 		BREAK_ARG=~/.tim/break.wav
@@ -75,14 +76,15 @@ if [ -z $BREAK_ARG ]; then
 	fi
 fi
 
-[ -z $POMODORO_END_CMD ] && POMODORO_END_CMD=$COMMAND
-if [ -z $POMODORO_END_ARG ]; then
+[ -z $POMODORO_CMD ] && POMODORO_CMD=$DEFAULT_COMMAND
+if [ -z $POMODORO_ARG ]; then
 	if [ -f ~/.tim/alarm.wav ]; then
-		POMODORO_END_ARG=~/.tim/alarm.wav
+		POMODORO_ARG=~/.tim/alarm.wav
 	elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
-		POMODORO_END_ARG=$DIRECTORY/audio_files/alarm.wav
+		POMODORO_ARG=$DIRECTORY/audio_files/alarm.wav
 	fi
 fi
+[ -z $POMODORO_REPEAT_ALARM ] && POMODORO_REPEAT_ALARM=0
 
 [ -z $POMODORO_WORK  ] && POMODORO_WORK=25
 [ -z $POMODORO_BREAK ] && POMODORO_BREAK=5
@@ -95,22 +97,31 @@ fi
 ###############################################################################
 # ENVIRONMENT CHECK SECTION                                                   #
 ###############################################################################
-ALL_COMMANDS=(TIMER_CMD WORK_CMD BREAK_CMD POMODORO_END_CMD)
-ALL_ARGUMENTS=(TIMER_ARG WORK_ARG BREAK_ARG POMODORO_END_ARG)
+CMD_SETTINGS=(TIMER_CMD WORK_CMD BREAK_CMD POMODORO_CMD)
+ARG_SETTINGS=(TIMER_ARG WORK_ARG BREAK_ARG POMODORO_ARG)
 
-for x in $ALL_COMMANDS; do
-	if ! $(type -p ${(P)x} > /dev/null); then
+INT_SETTINGS=(NO_FILE_CHECK TIMER_REPEAT_ALARM INTERVAL POMODORO_REPEAT_ALARM \
+              POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
+
+for x in $CMD_SETTINGS; do
+	if ! $(type -p ${(P)x} > /dev/null); then # Check if command exists.
 		echo "$x: Command '${(P)x}' doesn't exist." && ERROR=1
 	fi
 done
 
 if [[ ! $NO_FILE_CHECK == 1 ]]; then
-	for x in $ALL_ARGUMENTS; do
-		if [ ! -f ${(P)x} ]; then
+	for x in $ARG_SETTINGS; do
+		if [ ! -f ${(P)x} ]; then # Check if file exists.
 			echo "$x: File '${(P)x}' doesn't exist." && ERROR=1
 		fi
 	done
 fi
+
+for x in $INT_SETTINGS; do
+	if [[ ! ${(P)x} == <-> ]]; then
+		echo "$x: Setting '${(P)x}' is not valid. Numbers only!" && ERROR=1
+	fi
+done
 
 [[ ! -z $ERROR ]] && return 1
 
@@ -263,7 +274,14 @@ Start working now. Stop with Ctrl+C."
 
 	sleep $MINUTES_IN_SECONDS
 	echo "\nWorking session is over!"
-	$POMODORO_END_CMD $POMODORO_END_ARG
+
+	if [[ $POMODORO_REPEAT_ALARM == 1 ]]; then
+		while true; do
+			$POMODORO_CMD $POMODORO_ARG
+		done
+	else
+		$POMODORO_CMD $POMODORO_ARG
+	fi
 }
 
 
@@ -275,6 +293,7 @@ function debug {
 	echo "DIRECTORY: $DIRECTORY"
 	echo "VERSION: $VERSION"
 	echo "ERROR: $ERROR"
+	echo "DEFAULT_COMMAND: $DEFAULT_COMMAND"
 
 	echo "TIMER_CMD: $TIMER_CMD"
 	echo "TIMER_ARG: $TIMER_ARG"
@@ -286,14 +305,16 @@ function debug {
 	echo "BREAK_CMD: $BREAK_CMD"
 	echo "BREAK_ARG: $BREAK_ARG"
 
-	echo "POMODORO_END_CMD: $POMODORO_END_CMD"
-	echo "POMODORO_END_ARG: $POMODORO_END_ARG"
+	echo "POMODORO_CMD: $POMODORO_CMD"
+	echo "POMODORO_ARG: $POMODORO_ARG"
+	echo "POMODORO_REPEAT_ALARM: $POMODORO_REPEAT_ALARM"
+
+	echo "POMODORO_WORK: $POMODORO_WORK"
+	echo "POMODORO_STOP: $POMODORO_STOP"
+	echo "POMODORO_BREAK: $POMODORO_BREAK"
 
 	echo "INTERVAL: $INTERVAL"
 	echo "NO_FILE_CHECK: $NO_FILE_CHECK"
-	echo "POMODORO_BREAK: $POMODORO_BREAK"
-	echo "POMODORO_STOP: $POMODORO_STOP"
-	echo "POMODORO_WORK: $POMODORO_WORK"
 }
 
 
