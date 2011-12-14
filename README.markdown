@@ -4,11 +4,12 @@ Tim (Timer Script Improved)
 Description
 -----------
 Terminal countdown timer with several modes written in Zsh shell script.
-Currently Tim got a countdown timer, interval timer and pomodoro timer.
+Currently Tim got a countdown timer, interval timer, pomodoro timer and magical
+powers.
 
 Usage
 -----
-It's really simple to use Tim. Just run the script.
+It's really easy to play with Tim. Just run the script!
 
 	./tim.zsh --help
 
@@ -18,7 +19,7 @@ Read the file **timrc.example** for more information.
 
 Dependencies
 ------------
-You need to have Zsh installed to run this.
+You need to have **Zsh** installed to run this.
 
 When using the default settings Tim depends on:
 
