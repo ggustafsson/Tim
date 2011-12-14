@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+# vim: ft=zsh noet sw=4 ts=4
 
 # Copyright (c) 2011, Göran Gustafsson. All rights reserved.
 #
@@ -29,17 +30,14 @@
 # Git: https://github.com/ggustafsson/Timer-Script-Improved                   #
 ###############################################################################
 
-stty -echo # Disable display of keyboard input.
-
-VERSION=0.7
+VERSION=0.9
 FILENAME=$0:t # Get filename from full path.
 DIRECTORY=$0:A:h # Directory the script is in.
 
 CMD_SETTINGS=(TIMER_CMD WORK_CMD BREAK_CMD POMODORO_CMD)
-ARG_SETTINGS=(TIMER_ARG WORK_ARG BREAK_ARG POMODORO_ARG)
 
-INT_SETTINGS=(NO_FILE_CHECK TIMER_REPEAT_ALARM INTERVAL POMODORO_REPEAT_ALARM \
-              POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
+INT_SETTINGS=(INTERVAL TIMER_REPEAT_ALARM \
+              POMODORO_REPEAT_ALARM POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
 
 
 ###############################################################################
@@ -48,47 +46,51 @@ INT_SETTINGS=(NO_FILE_CHECK TIMER_REPEAT_ALARM INTERVAL POMODORO_REPEAT_ALARM \
 [ -f ~/.timrc ] && source ~/.timrc # Lazy fix. This is just temporary.
 
 if [[ $OSTYPE == darwin* ]]; then
-	DEFAULT_COMMAND=afplay # Comes with Mac OS X.
+	DEFAULT_CMD=afplay # Comes with Mac OS X.
 else
-	DEFAULT_COMMAND=aplay # Comes with alsa-utils.
+	DEFAULT_CMD="aplay -q" # Comes with alsa-utils.
 fi
 
 # If these variables are not found in ~/.timrc then set them. Tim checks for
 # audio files in this order: 1. ~/.timrc, 2. ~/.tim folder and 3. script $PWD.
-[ -z $TIMER_CMD ] && TIMER_CMD=$DEFAULT_COMMAND
-if [ -z $TIMER_ARG ]; then
+if [ -z $TIMER_CMD ]; then
 	if [ -f ~/.tim/alarm.wav ]; then
-		TIMER_ARG=~/.tim/alarm.wav
+		TIMER_CMD="$DEFAULT_CMD ~/.tim/alarm.wav"
 	elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
-		TIMER_ARG=$DIRECTORY/audio_files/alarm.wav
+		TIMER_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/alarm.wav"
+	else
+		FILE_ERROR=1
 	fi
 fi
 [ -z $TIMER_REPEAT_ALARM ] && TIMER_REPEAT_ALARM=0
 
-[ -z $WORK_CMD ] && WORK_CMD=$DEFAULT_COMMAND
-if [ -z $WORK_ARG ]; then
+if [ -z $WORK_CMD ]; then
 	if [ -f ~/.tim/work.wav ]; then
-		WORK_ARG=~/.tim/work.wav
+		WORK_CMD="$DEFAULT_CMD ~/.tim/work.wav"
 	elif [ -f $DIRECTORY/audio_files/work.wav ]; then
-		WORK_ARG=$DIRECTORY/audio_files/work.wav
+		WORK_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/work.wav"
+	else
+		FILE_ERROR=1
 	fi
 fi
 
-[ -z $BREAK_CMD ] && BREAK_CMD=$DEFAULT_COMMAND
-if [ -z $BREAK_ARG ]; then
+if [ -z $BREAK_CMD ]; then
 	if [ -f ~/.tim/break.wav ]; then
-		BREAK_ARG=~/.tim/break.wav
+		BREAK_CMD="$DEFAULT_CMD ~/.tim/break.wav"
 	elif [ -f $DIRECTORY/audio_files/break.wav ]; then
-		BREAK_ARG=$DIRECTORY/audio_files/break.wav
+		BREAK_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/break.wav"
+	else
+		FILE_ERROR=1
 	fi
 fi
 
-[ -z $POMODORO_CMD ] && POMODORO_CMD=$DEFAULT_COMMAND
-if [ -z $POMODORO_ARG ]; then
+if [ -z $POMODORO_CMD ]; then
 	if [ -f ~/.tim/alarm.wav ]; then
-		POMODORO_ARG=~/.tim/alarm.wav
+		POMODORO_CMD="$DEFAULT_CMD ~/.tim/alarm.wav"
 	elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
-		POMODORO_ARG=$DIRECTORY/audio_files/alarm.wav
+		POMODORO_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/alarm.wav"
+	else
+		FILE_ERROR=1
 	fi
 fi
 [ -z $POMODORO_REPEAT_ALARM ] && POMODORO_REPEAT_ALARM=0
@@ -97,34 +99,58 @@ fi
 [ -z $POMODORO_BREAK ] && POMODORO_BREAK=5
 [ -z $POMODORO_STOP  ] && POMODORO_STOP=4
 
-[ -z $INTERVAL      ] && INTERVAL=15
-[ -z $NO_FILE_CHECK ] && NO_FILE_CHECK=0
+[ -z $INTERVAL ] && INTERVAL=15
 
 
 ###############################################################################
 # VALIDATE SETTINGS SECTION                                                   #
 ###############################################################################
 function validate_settings {
+	a=(${(z)DEFAULT_CMD}) # Put value of DEFAULT_CMD in array.
+
+	if ! $(type -p $a[1] > /dev/null); then # Exists command?
+		if [[ $1 == debug ]]; then
+			echo "DEFAULT_CMD: Command '$a[1]' doesn't exist!" && ERROR=1
+		else
+			echo "Tim wants to use '$a[1]' but can't find it!
+
+Install it or specify other command in your ~/.timrc file.
+Read the file timrc.example for more information."
+
+			ERROR=1 && return 1
+		fi
+	fi
+
+	if [[ $FILE_ERROR == 1 ]]; then
+		if [[ $1 == debug ]]; then
+			echo "Can't find the default audio files!" && ERROR=1
+		else
+			echo "Tim can't find the default audio files!
+
+Put them in ~/.tim or specify other files in your ~/.timrc file.
+Read the file timrc.example for more information."
+
+			ERROR=1 && return 1
+		fi
+	fi
+
 	for x in $CMD_SETTINGS; do
-		if ! $(type -p ${(P)x} > /dev/null); then # Check if command exists.
-			echo "$x: Command '${(P)x}' doesn't exist." && ERROR=1
+		b=(${(zP)x}) # Put value of the current variable in array.
+
+		if ! $(type -p $b[1] > /dev/null); then # Exists command?
+			echo "$x: Command '$b[1]' doesn't exist!" && ERROR=1
 		fi
 	done
-
-	if [[ ! $NO_FILE_CHECK == 1 ]]; then
-		for x in $ARG_SETTINGS; do
-			if [ ! -f ${(P)x} ]; then # Check if file exists.
-				echo "$x: File '${(P)x}' doesn't exist." && ERROR=1
-			fi
-		done
-	fi
 
 	for x in $INT_SETTINGS; do
 		if [[ ! ${(P)x} == <-> ]]; then # Check if it's only integer
 			echo "$x: Setting '${(P)x}' is not valid. Numbers only!" && ERROR=1
 		fi
 	done
+
+	([[ $1 == debug ]] && [[ $ERROR == 1 ]]) && echo
 }
+
 
 ###############################################################################
 # INFORMATION SECTION                                                         #
@@ -144,6 +170,7 @@ function help {
                             (Default: 25 minutes work, 5 minutes break and
                              stop after 4 times.)
                             <http://en.wikipedia.org/wiki/Pomodoro_Technique>
+  -d, --debug              Display value of all variables and exit.
   -h, --help               Display this help and exit.
   -v, --version            Output version information and exit.
 
@@ -152,7 +179,11 @@ Examples:
   $FILENAME 5      # Wait 5 minutes before starting alarm.
   $FILENAME -i 10  # Work for 10 minutes and pause for 10 minutes.
   $FILENAME -i     # Same as above but use the timrc (or default) setting.
-  $FILENAME -p     # Pomodoro mode. Using timrc (or default) settings."
+  $FILENAME -p     # Pomodoro mode. Using timrc (or default) settings.
+
+Configuration:
+
+  Read the file timrc.example for more information."
 }
 
 function version {
@@ -170,7 +201,8 @@ Released under the BSD 2-Clause license."
 # TIMER MODE SECTION                                                          #
 ###############################################################################
 function timer {
-	validate_settings && [[ ! -z $ERROR ]] && return 1
+	validate_settings
+	[[ $ERROR == 1 ]] && return 1
 
 	(( MINUTES_IN_SECONDS = $1 * 60 ))
 
@@ -187,10 +219,10 @@ function timer {
 
 	if [[ $TIMER_REPEAT_ALARM == 1 ]]; then
 		while true; do
-			$TIMER_CMD $TIMER_ARG
+			eval $TIMER_CMD
 		done
 	else
-		$TIMER_CMD $TIMER_ARG
+		eval $TIMER_CMD
 	fi
 }
 
@@ -199,7 +231,8 @@ function timer {
 # INTERVAL MODE SECTION                                                       #
 ###############################################################################
 function interval {
-	validate_settings && [[ ! -z $ERROR ]] && return 1
+	validate_settings
+	[[ $ERROR == 1 ]] && return 1
 
 	if [[ -z $1 ]]; then
 		MINUTES=$INTERVAL
@@ -225,12 +258,12 @@ function interval {
 
 		if [[ $CURRENT_MODE == work ]]; then
 			echo "\033[1;32mTAKE A LITTLE BREAK!\033[0m"
-			$BREAK_CMD $BREAK_ARG
+			eval $BREAK_CMD
 
 			CURRENT_MODE=break
 		else
 			echo "\033[1;31mSTART WORKING AGAIN!\033[0m"
-			$WORK_CMD $WORK_ARG
+			eval $WORK_CMD
 
 			CURRENT_MODE=work
 		fi
@@ -242,7 +275,8 @@ function interval {
 # POMODORO MODE SECTION                                                       #
 ###############################################################################
 function pomodoro {
-	validate_settings && [[ ! -z $ERROR ]] && return 1
+	validate_settings
+	[[ $ERROR == 1 ]] && return 1
 
 	(( POMODORO_WORK_IN_SECONDS  = $POMODORO_WORK  * 60 ))
 	(( POMODORO_BREAK_IN_SECONDS = $POMODORO_BREAK * 60 ))
@@ -263,13 +297,13 @@ Start working now. Stop with Ctrl+C."
 
 		if [[ $CURRENT_MODE == work ]]; then
 			echo "\033[1;32mTAKE A LITTLE BREAK!\033[0m"
-			$BREAK_CMD $BREAK_ARG
+			eval $BREAK_CMD
 
 			CURRENT_MODE=break
 			MINUTES_IN_SECONDS=$POMODORO_BREAK_IN_SECONDS
 		else
 			echo "\033[1;31mSTART WORKING AGAIN!\033[0m"
-			$WORK_CMD $WORK_ARG
+			eval $WORK_CMD
 
 			CURRENT_MODE=work
 			MINUTES_IN_SECONDS=$POMODORO_WORK_IN_SECONDS
@@ -283,10 +317,10 @@ Start working now. Stop with Ctrl+C."
 
 	if [[ $POMODORO_REPEAT_ALARM == 1 ]]; then
 		while true; do
-			$POMODORO_CMD $POMODORO_ARG
+			eval $POMODORO_CMD
 		done
 	else
-		$POMODORO_CMD $POMODORO_ARG
+		eval $POMODORO_CMD
 	fi
 }
 
@@ -295,22 +329,22 @@ Start working now. Stop with Ctrl+C."
 # DEBUG SECTION (DISPLAY VARIABLES)                                           #
 ###############################################################################
 function debug {
-	echo "FILENAME: $FILENAME"
-	echo "DIRECTORY: $DIRECTORY"
-	echo "VERSION: $VERSION"
-	echo "ERROR: $ERROR"
-	echo "DEFAULT_COMMAND: $DEFAULT_COMMAND"
+	echo "DEBUG MODE\n"
+
+	validate_settings debug
+
+	echo "VALUE OF ALL VARIABLES:
+ FILENAME: $FILENAME
+ DIRECTORY: $DIRECTORY
+ VERSION: $VERSION
+ DEFAULT_CMD: $DEFAULT_CMD"
 
 	for x in $CMD_SETTINGS; do
-		echo "$x: ${(P)x}"
-	done
-
-	for x in $ARG_SETTINGS; do
-		echo "$x: ${(P)x}"
+		echo " $x: ${(P)x}"
 	done
 
 	for x in $INT_SETTINGS; do
-		echo "$x: ${(P)x}"
+		echo " $x: ${(P)x}"
 	done
 }
 
@@ -329,11 +363,11 @@ case $# in
 					usage && return 1
 				fi
 			;;
-			wtf)             debug | sort ;;
-			-i | --interval) interval     ;;
-			-p | --pomodoro) pomodoro     ;;
-			-h | --help)     help         ;;
-			-v | --version)  version      ;;
+			-i | --interval) interval ;;
+			-p | --pomodoro) pomodoro ;;
+			-d | --debug)    debug    ;;
+			-h | --help)     help     ;;
+			-v | --version)  version  ;;
 			*)
 				usage && return 1
 			;;

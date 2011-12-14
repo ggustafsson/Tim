@@ -1,30 +1,23 @@
 # vim: ft=sh
 
 ###############################################################################
-# Change variables after liking and move the file to ~/.timrc.                #
-# These are the default settings on Mac OS X. On GNU/Linux it's *_CMD=aplay.  #
-# *_ARG defaults to ~/.tim/FILENAME.wav if the file exists or else Tim checks #
-# for the files under the scripts $PWD in the directory audio_files.          #
+# Change the variables after liking and move the file to ~/.timrc.            #
+#                                                                             #
+# Below are the default settings Tim uses when nothing is set in ~/.timrc.    #
+# Tim looks for audio in ~/tim and $PWD/audio_files (Tim's directory).        #
+#                                                                             #
+# On GNU/Linux Tim uses "aplay -q" instead of "afplay" by default.            #
 ###############################################################################
 
-#NO_FILE_CHECK=0 # This MUST be set to 1 if you want to put something other
-                 # than filenames in *_ARG. For example if you use *_CMD=say
-                 # and *_ARG="say this text".
-
-#TIMER_CMD=afplay
-#TIMER_ARG=~/.tim/alarm.wav
+#TIMER_CMD="afplay ~/.tim/alarm.wav"
 #TIMER_REPEAT_ALARM=0
-
-#WORK_CMD=afplay
-#WORK_ARG=~/.tim/work.wav
-
-#BREAK_CMD=afplay
-#BREAK_ARG=~/.tim/break.wav
 
 #INTERVAL=15
 
-#POMODORO_CMD=afplay
-#POMODORO_ARG=~/.tim/end.wav
+#WORK_CMD="afplay ~/.tim/work.wav"
+#BREAK_CMD="afplay ~/.tim/break.wav"
+
+#POMODORO_CMD="afplay ~/.tim/alarm.wav"
 #POMODORO_REPEAT_ALARM=0
 
 #POMODORO_WORK=25

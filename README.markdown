@@ -11,7 +11,7 @@ Usage
 
 Configuration
 -------------
-Read the file **timrc.example**.
+Read the file **timrc.example** for more information.
 
 Dependencies
 ------------
@@ -28,16 +28,9 @@ Tips
 ----
 If you use Mac OS X you can put this in ~/.timrc to make it speak:
 
-	NO_FILE_CHECK=1
-
-	WORK_CMD=say
-	WORK_ARG="start working again"
-
-	BREAK_CMD=say
-	BREAK_ARG="take a little break"
-
-	POMODORO_CMD=say
-	POMODORO_ARG="working session is over. take a break"
+	WORK_CMD="say start working again"
+	BREAK_CMD="say take a little break"
+	POMODORO_CMD="say working session is over. take a break"
 
 License
 -------
