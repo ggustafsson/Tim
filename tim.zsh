@@ -30,14 +30,13 @@
 # Git: https://github.com/ggustafsson/Timer-Script-Improved                   #
 ###############################################################################
 
-VERSION=1.0
+VERSION=1.0.2
 FILENAME=$0:t # Get filename from full path.
 DIRECTORY=$0:A:h # Directory the script is in.
 
 CMD_SETTINGS=(TIMER_CMD WORK_CMD BREAK_CMD POMODORO_CMD)
-
-INT_SETTINGS=(INTERVAL TIMER_REPEAT_ALARM \
-              POMODORO_REPEAT_ALARM POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
+RPT_SETTINGS=(TIMER_REPEAT_ALARM POMODORO_REPEAT_ALARM)
+INT_SETTINGS=(INTERVAL POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
 
 
 ###############################################################################
@@ -143,9 +142,15 @@ Read the file timrc.example for more information."
 		fi
 	done
 
+	for x in $RPT_SETTINGS; do
+		if [[ ! ${(P)x} == <-> ]] || [[ ${(P)x} != [0-1] ]]; then # Check if it's only integer
+			echo "$x: Setting '${(P)x}' is not valid." && ERROR=1
+		fi
+	done
+
 	for x in $INT_SETTINGS; do
-		if [[ ! ${(P)x} == <-> ]]; then # Check if it's only integer
-			echo "$x: Setting '${(P)x}' is not valid. Numbers only!" && ERROR=1
+		if [[ ! ${(P)x} == <-> ]] || [[ ${(P)x} < 1 ]]; then # Check if it's only integer
+			echo "$x: Setting '${(P)x}' is not valid." && ERROR=1
 		fi
 	done
 
@@ -216,7 +221,7 @@ function timer {
 	echo "Stop with Ctrl+C."
 
 	sleep $MINUTES_IN_SECONDS
-	print -P "%B%F{red}ALARM SET OFF!%f%b"
+	print -P "\n%B%F{red}ALARM SET OFF!%f%b"
 
 	if [[ $TIMER_REPEAT_ALARM == 1 ]]; then
 		while true; do
@@ -341,6 +346,10 @@ function debug {
  DEFAULT_CMD: $DEFAULT_CMD"
 
 	for x in $CMD_SETTINGS; do
+		echo " $x: ${(P)x}"
+	done
+
+	for x in $RPT_SETTINGS; do
 		echo " $x: ${(P)x}"
 	done
 
