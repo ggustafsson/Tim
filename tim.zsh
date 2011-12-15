@@ -30,7 +30,7 @@
 # Git: https://github.com/ggustafsson/Timer-Script-Improved                   #
 ###############################################################################
 
-VERSION=0.9
+VERSION=1.0
 FILENAME=$0:t # Get filename from full path.
 DIRECTORY=$0:A:h # Directory the script is in.
 
