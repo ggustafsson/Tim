@@ -216,7 +216,7 @@ function timer {
 	echo "Stop with Ctrl+C."
 
 	sleep $MINUTES_IN_SECONDS
-	print -P "%B%F{red}ALARM SET OFF!"
+	print -P "%B%F{red}ALARM SET OFF!%f%b"
 
 	if [[ $TIMER_REPEAT_ALARM == 1 ]]; then
 		while true; do
@@ -258,12 +258,12 @@ function interval {
 		[ -z $LINEBREAK ] && echo && LINEBREAK=0
 
 		if [[ $CURRENT_MODE == work ]]; then
-			print -P "%B%F{green}TAKE A LITTLE BREAK!"
+			print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
 			eval $BREAK_CMD
 
 			CURRENT_MODE=break
 		else
-			print -P "%B%F{red}START WORKING AGAIN!"
+			print -P "%B%F{red}START WORKING AGAIN!%f%b"
 			eval $WORK_CMD
 
 			CURRENT_MODE=work
@@ -297,13 +297,13 @@ Start working now. Stop with Ctrl+C."
 		[ -z $LINEBREAK ] && echo && LINEBREAK=0
 
 		if [[ $CURRENT_MODE == work ]]; then
-			print -P "%B%F{green}TAKE A LITTLE BREAK!"
+			print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
 			eval $BREAK_CMD
 
 			CURRENT_MODE=break
 			MINUTES_IN_SECONDS=$POMODORO_BREAK_IN_SECONDS
 		else
-			print -P "%B%F{red}START WORKING AGAIN!"
+			print -P "%B%F{red}START WORKING AGAIN!%f%b"
 			eval $WORK_CMD
 
 			CURRENT_MODE=work
