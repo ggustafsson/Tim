@@ -375,7 +375,7 @@ case $# in
 		esac
 	;;
 	2)
-		if ([[ $1 == -i ]] && [[ $2 == <-> ]]); then # Check if $2 is integer.
+		if [[ $1 == -i ]] && [[ $2 == <-> ]]; then # Check if $2 is integer.
 			if [[ $2 > 0 ]]; then
 				interval $2 # Send argument $2 to function interval.
 			else
