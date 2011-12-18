@@ -30,7 +30,7 @@
 # Git: https://github.com/ggustafsson/Timer-Script-Improved                   #
 ###############################################################################
 
-VERSION=1.0.2
+VERSION=1.0.3
 FILENAME=$0:t # Get filename from full path.
 DIRECTORY=$0:A:h # Directory the script is in.
 
@@ -108,7 +108,7 @@ fi
 function validate_settings {
 	a=(${(z)DEFAULT_CMD}) # Put value of DEFAULT_CMD in array.
 
-	if ! $(type -p $a[1] > /dev/null); then # Exists command?
+	if ! type -p $a[1] >& /dev/null; then # Exists command?
 		if [[ $1 == debug ]]; then
 			echo "DEFAULT_CMD: Command '$a[1]' doesn't exist!" && ERROR=1
 		else
@@ -137,7 +137,7 @@ Read the file timrc.example for more information."
 	for x in $CMD_SETTINGS; do
 		b=(${(zP)x}) # Put value of the current variable in array.
 
-		if ! $(type -p $b[1] > /dev/null); then # Exists command?
+		if ! type -p $b[1] >& /dev/null; then # Exists command?
 			echo "$x: Command '$b[1]' doesn't exist!" && ERROR=1
 		fi
 	done
