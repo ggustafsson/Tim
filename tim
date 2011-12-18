@@ -1,5 +1,4 @@
 #!/usr/bin/env zsh
-# vim: ft=zsh noet sw=4 ts=4
 
 # Copyright (c) 2011, Göran Gustafsson. All rights reserved.
 #
@@ -30,9 +29,9 @@
 # Git: https://github.com/ggustafsson/Timer-Script-Improved                   #
 ###############################################################################
 
-VERSION=1.0.3
-FILENAME=$0:t # Get filename from full path.
-DIRECTORY=$0:A:h # Directory the script is in.
+VERSION=1.0.4
+FILENAME=$0:t # Get the current filename of the script.
+DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
 CMD_SETTINGS=(TIMER_CMD WORK_CMD BREAK_CMD POMODORO_CMD)
 RPT_SETTINGS=(TIMER_REPEAT_ALARM POMODORO_REPEAT_ALARM)
@@ -42,7 +41,7 @@ INT_SETTINGS=(INTERVAL POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
 ###############################################################################
 # CONFIGURATION SECTION                                                       #
 ###############################################################################
-[ -f ~/.timrc ] && source ~/.timrc # Lazy fix. This is just temporary.
+[ -f ~/.timrc ] && source ~/.timrc # Lazy fix. This is probably temporary.
 
 if [[ $OSTYPE == darwin* ]]; then
 	DEFAULT_CMD=afplay # Comes with Mac OS X.
@@ -106,9 +105,9 @@ fi
 # VALIDATE SETTINGS SECTION                                                   #
 ###############################################################################
 function validate_settings {
-	a=(${(z)DEFAULT_CMD}) # Put value of DEFAULT_CMD in array.
+	a=(${(z)DEFAULT_CMD}) # Puts the value of DEFAULT_CMD into an array.
 
-	if ! type -p $a[1] >& /dev/null; then # Exists command?
+	if ! type -p $a[1] >& /dev/null; then # Checks if command exist.
 		if [[ $1 == debug ]]; then
 			echo "DEFAULT_CMD: Command '$a[1]' doesn't exist!" && ERROR=1
 		else
@@ -135,21 +134,23 @@ Read the file timrc.example for more information."
 	fi
 
 	for x in $CMD_SETTINGS; do
-		b=(${(zP)x}) # Put value of the current variable in array.
+		b=(${(zP)x}) # Puts the value of the current variable into an array.
 
-		if ! type -p $b[1] >& /dev/null; then # Exists command?
+		if ! type -p $b[1] >& /dev/null; then # Checks if command exist.
 			echo "$x: Command '$b[1]' doesn't exist!" && ERROR=1
 		fi
 	done
 
 	for x in $RPT_SETTINGS; do
-		if [[ ! ${(P)x} == <-> ]] || [[ ${(P)x} != [0-1] ]]; then # Check if it's only integer
+		# Checks if the settings only contain numbers and have a value of 0/1.
+		if [[ ! ${(P)x} == <-> ]] || [[ ${(P)x} != [0-1] ]]; then
 			echo "$x: Setting '${(P)x}' is not valid." && ERROR=1
 		fi
 	done
 
 	for x in $INT_SETTINGS; do
-		if [[ ! ${(P)x} == <-> ]] || [[ ${(P)x} < 1 ]]; then # Check if it's only integer
+		# Checks if the settings only contain numbers and have a value above 0.
+		if [[ ! ${(P)x} == <-> ]] || [[ ${(P)x} < 1 ]]; then
 			echo "$x: Setting '${(P)x}' is not valid." && ERROR=1
 		fi
 	done
@@ -208,7 +209,7 @@ Released under the BSD 2-Clause license."
 ###############################################################################
 function timer {
 	validate_settings
-	[[ $ERROR == 1 ]] && return 1
+	[[ $ERROR == 1 ]] && return 1 # Terminates if there's a problem with timrc.
 
 	(( MINUTES_IN_SECONDS = $1 * 60 ))
 
@@ -238,7 +239,7 @@ function timer {
 ###############################################################################
 function interval {
 	validate_settings
-	[[ $ERROR == 1 ]] && return 1
+	[[ $ERROR == 1 ]] && return 1 # Terminates if there's a problem with timrc.
 
 	if [[ -z $1 ]]; then
 		MINUTES=$INTERVAL
@@ -282,7 +283,7 @@ function interval {
 ###############################################################################
 function pomodoro {
 	validate_settings
-	[[ $ERROR == 1 ]] && return 1
+	[[ $ERROR == 1 ]] && return 1 # Terminates if there's a problem with timrc.
 
 	(( POMODORO_WORK_IN_SECONDS  = $POMODORO_WORK  * 60 ))
 	(( POMODORO_BREAK_IN_SECONDS = $POMODORO_BREAK * 60 ))
@@ -366,9 +367,9 @@ case $# in
 	0) usage ;;
 	1)
 		case $1 in
-			<->) # Check if $1 is integer.
+			<->) # Check if $1 only contain numbers.
 				if [[ $1 > 0 ]]; then
-					timer $1 # Send argument $1 to function timer.
+					timer $1 # Send argument $1 to the function timer.
 				else
 					usage && return 1
 				fi
@@ -386,7 +387,7 @@ case $# in
 	2)
 		if [[ $1 == -i ]] && [[ $2 == <-> ]]; then # Check if $2 is integer.
 			if [[ $2 > 0 ]]; then
-				interval $2 # Send argument $2 to function interval.
+				interval $2 # Send argument $2 to the function interval.
 			else
 				usage && return 1
 			fi

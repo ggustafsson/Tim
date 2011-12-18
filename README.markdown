@@ -11,7 +11,7 @@ Usage
 -----
 It's really easy to play with Tim. Just run the script!
 
-	./tim.zsh --help
+	./tim --help
 
 Configuration
 -------------
@@ -24,9 +24,9 @@ You need to have **Zsh** installed to run this.
 When using the default settings Tim depends on:
 
 - Mac OS X:
-  - **afplay**
+  - **afplay** - Comes with Mac OS X.
 - GNU/Linux:
-  - **aplay**
+  - **aplay** - Comes with alsa-utils.
 
 Tips
 ----
