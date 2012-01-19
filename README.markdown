@@ -32,7 +32,7 @@ Tips
 ----
 If you use Mac OS X you can put this in ~/.timrc to make it speak:
 
-    WORK_CMD="say start working again"
+    WORK_CMD="say start working now"
     BREAK_CMD="say take a little break"
     POMODORO_CMD="say working session is over. take a break"
 
