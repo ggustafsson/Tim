@@ -1,8 +1,6 @@
 Tim (Timer Script Improved)
 ===========================
-
 ![Tim](https://github.com/ggustafsson/Tim/raw/master/Preview.png)
-
 Description
 -----------
 Terminal countdown timer with several modes written in Zsh shell script.
