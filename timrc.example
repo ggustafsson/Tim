@@ -4,7 +4,7 @@
 # Change the variables after liking and move the file to ~/.timrc.            #
 #                                                                             #
 # Below are the default settings Tim uses when nothing is set in ~/.timrc.    #
-# Tim looks for audio in ~/tim and $PWD/audio_files (Tim's directory).        #
+# Tim looks for audio in ~/.tim and $PWD/audio_files (Tim's directory).       #
 #                                                                             #
 # On GNU/Linux Tim uses "aplay -q" instead of "afplay" by default.            #
 ###############################################################################
