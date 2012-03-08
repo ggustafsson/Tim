@@ -9,18 +9,28 @@
 # On GNU/Linux Tim uses "aplay -q" instead of "afplay" by default.            #
 ###############################################################################
 
-#TIMER_CMD="afplay ~/.tim/alarm.wav"
-#TIMER_REPEAT_ALARM=0
+TIMER_CMD="afplay ~/.tim/alarm.wav"
+  # The command that executes when the normal countdown mode ends.
+TIMER_REPEAT_ALARM=0
+  # Set this to 1 if you want the command above to loop endlessly.
 
-#INTERVAL=15
+INTERVAL=15
+  # The default time (in minutes) for the interval mode.
 
-#WORK_CMD="afplay ~/.tim/work.wav"
-#BREAK_CMD="afplay ~/.tim/break.wav"
+WORK_CMD="afplay ~/.tim/work.wav"
+  # The command that executes when the work period starts.
+BREAK_CMD="afplay ~/.tim/break.wav"
+  # The command that executes when the break period starts.
 
-#POMODORO_CMD="afplay ~/.tim/alarm.wav"
-#POMODORO_REPEAT_ALARM=0
+POMODORO_CMD="afplay ~/.tim/alarm.wav"
+  # The command that executes when the pomodoro session is completed.
+POMODORO_REPEAT_ALARM=0
+  # Set this to 1 if you want the command above to loop endlessly.
 
-#POMODORO_WORK=25
-#POMODORO_BREAK=5
-#POMODORO_STOP=4
+POMODORO_WORK=25
+  # The default time (in minutes) for the work period under pomodoro mode.
+POMODORO_BREAK=5
+  # The default time (in minutes) for the break period under pomodoro mode.
+POMODORO_STOP=4
+  # How many times work and break mode should run before pomodoro mode ends.
 
