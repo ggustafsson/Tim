@@ -11,7 +11,7 @@
 
 TIMER_CMD="afplay ~/.tim/alarm.wav"
   # The command that executes when the normal countdown mode ends.
-TIMER_REPEAT_ALARM=0
+TIMER_REPEAT_CMD=0
   # Set this to 1 if you want the command above to loop endlessly.
 
 INTERVAL=15
@@ -24,7 +24,7 @@ BREAK_CMD="afplay ~/.tim/break.wav"
 
 POMODORO_CMD="afplay ~/.tim/alarm.wav"
   # The command that executes when the pomodoro session is completed.
-POMODORO_REPEAT_ALARM=0
+POMODORO_REPEAT_CMD=0
   # Set this to 1 if you want the command above to loop endlessly.
 
 POMODORO_WORK=25

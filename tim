@@ -29,12 +29,12 @@
 # Git: https://github.com/ggustafsson/Timer-Script-Improved                   #
 ###############################################################################
 
-VERSION=1.1
+VERSION=1.1.1
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
 CMD_SETTINGS=(TIMER_CMD WORK_CMD BREAK_CMD POMODORO_CMD)
-RPT_SETTINGS=(TIMER_REPEAT_ALARM POMODORO_REPEAT_ALARM)
+RPT_SETTINGS=(TIMER_REPEAT_CMD POMODORO_REPEAT_CMD)
 INT_SETTINGS=(INTERVAL POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
 
 
@@ -99,8 +99,8 @@ if [ -z $POMODORO_CMD ]; then
   fi
 fi
 
-[ -z $TIMER_REPEAT_ALARM    ] && TIMER_REPEAT_ALARM=0
-[ -z $POMODORO_REPEAT_ALARM ] && POMODORO_REPEAT_ALARM=0
+[ -z $TIMER_REPEAT_CMD    ] && TIMER_REPEAT_CMD=0
+[ -z $POMODORO_REPEAT_CMD ] && POMODORO_REPEAT_CMD=0
 
 [ -z $POMODORO_WORK  ] && POMODORO_WORK=25
 [ -z $POMODORO_BREAK ] && POMODORO_BREAK=5
@@ -235,7 +235,7 @@ function timer {
   sleep $MINUTES_IN_SECONDS
   print -P "\n%B%F{red}ALARM SET OFF!%f%b"
 
-  if [[ $TIMER_REPEAT_ALARM == 1 ]]; then
+  if [[ $TIMER_REPEAT_CMD == 1 ]]; then
     while true; do
       eval $TIMER_CMD
     done
@@ -351,7 +351,7 @@ Start working now. Stop with Ctrl+C."
   sleep $MINUTES_IN_SECONDS
   echo "\nWorking session is over!"
 
-  if [[ $POMODORO_REPEAT_ALARM == 1 ]]; then
+  if [[ $POMODORO_REPEAT_CMD == 1 ]]; then
     while true; do
       eval $POMODORO_CMD # Execute POMODORO_CMD and loop until terminating.
     done
