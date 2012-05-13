@@ -1,4 +1,4 @@
-# vim: ft=sh
+# vim: ft=zsh
 
 ###############################################################################
 # Change the variables after liking and move the file to ~/.timrc.            #
@@ -10,27 +10,27 @@
 ###############################################################################
 
 TIMER_CMD="afplay ~/.tim/alarm.wav"
-  # The command that executes when the normal countdown mode ends.
+ # The command that executes when the normal countdown mode ends.
 TIMER_REPEAT_CMD=0
-  # Set this to 1 if you want the command above to loop endlessly.
+ # Set this to 1 if you want the command above to loop endlessly.
 
 INTERVAL=15
-  # The default time (in minutes) for the interval mode.
+ # The default time (in minutes) for the interval mode.
 
 WORK_CMD="afplay ~/.tim/work.wav"
-  # The command that executes when the work period starts.
+ # The command that executes when the work period starts.
 BREAK_CMD="afplay ~/.tim/break.wav"
-  # The command that executes when the break period starts.
+ # The command that executes when the break period starts.
 
 POMODORO_CMD="afplay ~/.tim/alarm.wav"
-  # The command that executes when the pomodoro session is completed.
+ # The command that executes when the pomodoro session is completed.
 POMODORO_REPEAT_CMD=0
-  # Set this to 1 if you want the command above to loop endlessly.
+ # Set this to 1 if you want the command above to loop endlessly.
 
 POMODORO_WORK=25
-  # The default time (in minutes) for the work period under pomodoro mode.
+ # The default time (in minutes) for the work period under pomodoro mode.
 POMODORO_BREAK=5
-  # The default time (in minutes) for the break period under pomodoro mode.
+ # The default time (in minutes) for the break period under pomodoro mode.
 POMODORO_STOP=4
-  # How many times work and break mode should run before pomodoro mode ends.
+ # How many times work and break mode should run before pomodoro mode ends.
 
