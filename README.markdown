@@ -1,5 +1,5 @@
-Tim (Timer Script Improved)
-===========================
+Tim (Timer Script)
+==================
 
 ![Tim](https://github.com/ggustafsson/Tim/raw/master/Preview.png)
 

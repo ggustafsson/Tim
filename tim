@@ -25,11 +25,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 ###############################################################################
-# Web: http://ggustafsson.github.com/Timer-Script-Improved                    #
-# Git: https://github.com/ggustafsson/Timer-Script-Improved                   #
+# Web: https://github.com/ggustafsson/Tim                                     #
+# Git: git://github.com/ggustafsson/Tim.git                                   #
 ###############################################################################
 
-VERSION=1.1.1
+VERSION=1.1.2
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -205,10 +205,10 @@ Configuration:
 }
 
 function version {
-  echo "Tim (Timer Script Improved) $VERSION
+  echo "Tim (Timer Script) $VERSION
 
-Web: http://ggustafsson.github.com/Timer-Script-Improved
-Git: https://github.com/ggustafsson/Timer-Script-Improved
+Web: https://github.com/ggustafsson/Tim
+Git: git://github.com/ggustafsson/Tim.git
 
 Written by Göran Gustafsson <gustafsson.g@gmail.com>.
 Released under the BSD 2-Clause license."
