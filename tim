@@ -29,7 +29,7 @@
 # Git: git://github.com/ggustafsson/Tim.git                                   #
 ###############################################################################
 
-VERSION=1.1.2
+VERSION=1.1.3
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -292,12 +292,12 @@ function interval {
 
     if [[ $CURRENT_MODE == work ]]; then
       print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
-      eval $BREAK_CMD
+      eval $BREAK_CMD &
 
       CURRENT_MODE=break
     else
       print -P "%B%F{red}START WORKING NOW!%f%b"
-      eval $WORK_CMD
+      eval $WORK_CMD &
 
       CURRENT_MODE=work
     fi
@@ -332,13 +332,14 @@ Start working now. Stop with Ctrl+C."
 
     if [[ $CURRENT_MODE == work ]]; then
       print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
-      eval $BREAK_CMD
+      eval $BREAK_CMD &
 
       CURRENT_MODE=break
       MINUTES_IN_SECONDS=$POMODORO_BREAK_IN_SECONDS
     else
-      print -P "%B%F{red}START WORKING NOW!%f%b"
-      eval $WORK_CMD
+      print -Pn "%B%F{red}START WORKING NOW!%f%b Press return when ready..."
+      eval $WORK_CMD &
+      read WAIT_FOR_INPUT
 
       CURRENT_MODE=work
       MINUTES_IN_SECONDS=$POMODORO_WORK_IN_SECONDS
