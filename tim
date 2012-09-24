@@ -29,7 +29,7 @@
 # Git: git://github.com/ggustafsson/Tim.git                                   #
 ###############################################################################
 
-VERSION=1.1.4
+VERSION=1.1.5
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -160,7 +160,7 @@ Read the file timrc.example for more information."
 
   for X in $INT_SETTINGS; do
     # Checks if the settings only contain numbers and have a value above 0.
-    if [[ ! ${(P)X} == <-> || ${(P)X} < 1 ]]; then
+    if [[ ! ${(P)X} == <-> || ${(P)X} -lt 1 ]]; then
       echo "$X: Setting '${(P)X}' is not valid." && ERROR=1
     fi
   done
@@ -225,7 +225,7 @@ function timer {
   (( MINUTES_IN_SECONDS = $1 * 60 )) # Convert minutes to seconds.
 
   echo -n "Starting timer. Waiting for $1 "
-  if [[ $1 > 1 ]]; then
+  if [[ $1 -gt 1 ]]; then
     echo "minutes."
   else
     echo "minute."
@@ -272,7 +272,7 @@ function interval {
   fi
 
   echo -n "Starting timer. Interval of $MINUTES "
-  if [[ $MINUTES > 1 ]]; then
+  if [[ $MINUTES -gt 1 ]]; then
     echo "minutes."
   else
     echo "minute."
@@ -325,7 +325,7 @@ function pomodoro {
 
 Start working now. Stop with Ctrl+C."
 
-  while [[ $CURRENT_RUN < $POMODORO_STOP ]]; do
+  while [[ $CURRENT_RUN -lt $POMODORO_STOP ]]; do
     sleep $MINUTES_IN_SECONDS
 
     [ -z $LINEBREAK ] && echo && LINEBREAK=0
@@ -399,7 +399,7 @@ case $# in
   1)
     case $1 in
       <->) # Check if $1 only contain numbers.
-        if [[ $1 > 0 ]]; then
+        if [[ $1 -gt 0 ]]; then
           timer $1 # Send argument $1 to the function.
         else
           usage && return 1
@@ -419,14 +419,14 @@ case $# in
   2)
     # Check if $1 is -i or --interval and if $2 is integer.
     if [[ $1 == (-i|--interval) && $2 == <-> ]]; then
-      if [[ $2 > 0 ]]; then # Check if integer is more than 0.
+      if [[ $2 -gt 0 ]]; then # Check if integer is more than 0.
         interval $2 # Send argument $2 to the function.
       else
         usage && return 1
       fi
     # Check if $1 is -ri or --rinterval and if $2 is integer.
     elif [[ $1 == (-ri|--rinterval) && $2 == <-> ]]; then
-      if [[ $2 > 0 ]]; then # Check if integer is more than 0.
+      if [[ $2 -gt 0 ]]; then # Check if integer is more than 0.
         interval reverse $2 # Send argument reverse and $2 to the function.
       else
         usage && return 1
