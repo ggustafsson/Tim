@@ -24,12 +24,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-###############################################################################
-# Web: https://github.com/ggustafsson/Tim                                     #
-# Git: git://github.com/ggustafsson/Tim.git                                   #
-###############################################################################
+##############################################################################
+# Web: https://github.com/ggustafsson/Tim                                    #
+# Git: git://github.com/ggustafsson/Tim.git                                  #
+##############################################################################
 
-VERSION=1.1.5
+VERSION=1.1.6
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -38,9 +38,9 @@ RPT_SETTINGS=(TIMER_REPEAT_CMD POMODORO_REPEAT_CMD)
 INT_SETTINGS=(INTERVAL POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
 
 
-###############################################################################
-# CONFIGURATION SECTION                                                       #
-###############################################################################
+##############################################################################
+# CONFIGURATION SECTION                                                      #
+##############################################################################
 [ -f ~/.timrc ] && source ~/.timrc # Lazy fix. This is probably temporary.
 
 if [[ $OSTYPE == darwin* ]]; then
@@ -50,7 +50,7 @@ else
 fi
 
 # If these variables are not found in ~/.timrc then set them. Tim checks for
-# audio files in this order: 1. ~/.timrc, 2. ~/.tim folder and 3. script $PWD.
+# audio files in this order: ~/.timrc, ~/.tim folder and then the script $PWD.
 if [ -z $TIMER_CMD ]; then
   if [ -f ~/.tim/alarm.wav ]; then
     TIMER_CMD="$DEFAULT_CMD ~/.tim/alarm.wav"
@@ -109,9 +109,9 @@ fi
 [ -z $INTERVAL ] && INTERVAL=15
 
 
-###############################################################################
-# VALIDATE SETTINGS SECTION                                                   #
-###############################################################################
+##############################################################################
+# VALIDATE SETTINGS SECTION                                                  #
+##############################################################################
 function validate_settings {
   if [[ $USE_DEFAULT_CMD == 1 ]]; then
     A=(${(z)DEFAULT_CMD}) # Puts the value of DEFAULT_CMD into an array.
@@ -169,9 +169,9 @@ Read the file timrc.example for more information."
 }
 
 
-###############################################################################
-# INFORMATION SECTION                                                         #
-###############################################################################
+##############################################################################
+# INFORMATION SECTION                                                        #
+##############################################################################
 function usage {
   echo "Usage: $FILENAME [OPTION]... [NUMBER]...
 Try '--help' for more information."
@@ -187,7 +187,6 @@ function help {
   -p, --pomodoro             Work X minutes and pause X minutes. Run X times.
                               (Default: 25 minutes work, 5 minutes break and
                                stop after 4 times.)
-                              <http://en.wikipedia.org/wiki/Pomodoro_Technique>
   -d, --debug                Display value of all variables and exit.
   -h, --help                 Display this help and exit.
   -v, --version              Output version information and exit.
@@ -215,9 +214,9 @@ Released under the BSD 2-Clause license."
 }
 
 
-###############################################################################
-# TIMER MODE SECTION                                                          #
-###############################################################################
+##############################################################################
+# TIMER MODE SECTION                                                         #
+##############################################################################
 function timer {
   validate_settings
   [[ $ERROR == 1 ]] && return 1 # Terminate if there's a problem with timrc.
@@ -245,9 +244,9 @@ function timer {
 }
 
 
-###############################################################################
-# INTERVAL MODE SECTION                                                       #
-###############################################################################
+##############################################################################
+# INTERVAL MODE SECTION                                                      #
+##############################################################################
 function interval {
   validate_settings
   [[ $ERROR == 1 ]] && return 1 # Terminate if there's a problem with timrc.
@@ -305,9 +304,9 @@ function interval {
 }
 
 
-###############################################################################
-# POMODORO MODE SECTION                                                       #
-###############################################################################
+##############################################################################
+# POMODORO MODE SECTION                                                      #
+##############################################################################
 function pomodoro {
   validate_settings
   [[ $ERROR == 1 ]] && return 1 # Terminate if there's a problem with timrc.
@@ -321,7 +320,7 @@ function pomodoro {
   MINUTES_IN_SECONDS=$POMODORO_WORK_IN_SECONDS
 
   echo "Starting timer. Pomodoro mode:
- Work $POMODORO_WORK min. Break $POMODORO_BREAK min. Stop after $POMODORO_STOP.
+Work $POMODORO_WORK min. Break $POMODORO_BREAK min. Stop after $POMODORO_STOP.
 
 Start working now. Stop with Ctrl+C."
 
@@ -362,9 +361,9 @@ Start working now. Stop with Ctrl+C."
 }
 
 
-###############################################################################
-# DEBUG SECTION (DISPLAY VARIABLES)                                           #
-###############################################################################
+##############################################################################
+# DEBUG SECTION (DISPLAY VARIABLES)                                          #
+##############################################################################
 function debug {
   echo "DEBUG MODE\n"
 
@@ -391,9 +390,9 @@ function debug {
 }
 
 
-###############################################################################
-# OPTIONS AND EXECUTION SECTION                                               #
-###############################################################################
+##############################################################################
+# OPTIONS AND EXECUTION SECTION                                              #
+##############################################################################
 case $# in
   0) usage ;;
   1)
