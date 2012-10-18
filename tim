@@ -29,7 +29,7 @@
 # Git: git://github.com/ggustafsson/Tim.git                                  #
 ##############################################################################
 
-VERSION=1.1.7
+VERSION=1.1.8
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -53,48 +53,48 @@ fi
 # If these variables are not found in ~/.timrc then set them. Tim checks for
 # audio files in this order: ~/.timrc, ~/.tim folder and then the script $PWD.
 if [ -z $TIMER_CMD ]; then
+  USE_DEFAULT_CMD=1
+
   if [ -f ~/.tim/alarm.wav ]; then
     TIMER_CMD="$DEFAULT_CMD ~/.tim/alarm.wav"
-    USE_DEFAULT_CMD=1
   elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
     TIMER_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/alarm.wav"
-    USE_DEFAULT_CMD=1
   else
     FILE_ERROR=1
   fi
 fi
 
 if [ -z $WORK_CMD ]; then
+  USE_DEFAULT_CMD=1
+
   if [ -f ~/.tim/work.wav ]; then
     WORK_CMD="$DEFAULT_CMD ~/.tim/work.wav"
-    USE_DEFAULT_CMD=1
   elif [ -f $DIRECTORY/audio_files/work.wav ]; then
     WORK_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/work.wav"
-    USE_DEFAULT_CMD=1
   else
     FILE_ERROR=1
   fi
 fi
 
 if [ -z $BREAK_CMD ]; then
+  USE_DEFAULT_CMD=1
+
   if [ -f ~/.tim/break.wav ]; then
     BREAK_CMD="$DEFAULT_CMD ~/.tim/break.wav"
-    USE_DEFAULT_CMD=1
   elif [ -f $DIRECTORY/audio_files/break.wav ]; then
     BREAK_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/break.wav"
-    USE_DEFAULT_CMD=1
   else
     FILE_ERROR=1
   fi
 fi
 
 if [ -z $POMODORO_CMD ]; then
+  USE_DEFAULT_CMD=1
+
   if [ -f ~/.tim/alarm.wav ]; then
     POMODORO_CMD="$DEFAULT_CMD ~/.tim/alarm.wav"
-    USE_DEFAULT_CMD=1
   elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
     POMODORO_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/alarm.wav"
-    USE_DEFAULT_CMD=1
   else
     FILE_ERROR=1
   fi
@@ -115,13 +115,13 @@ fi
 ##############################################################################
 validate_settings() {
   if [[ $USE_DEFAULT_CMD == 1 ]]; then
-    A=(${(z)DEFAULT_CMD}) # Puts the value of DEFAULT_CMD into an array.
+    Y=(${(z)DEFAULT_CMD}) # Puts the value of DEFAULT_CMD into an array.
 
-    if ! type -p $A[1] >& /dev/null; then # Checks if command exist.
+    if ! type -p $Y[1] >& /dev/null; then # Checks if command exist.
       if [[ $1 == debug ]]; then # Different output if debug mode is on.
-        echo "DEFAULT_CMD: Command '$A[1]' doesn't exist!" && ERROR=1
+        echo "DEFAULT_CMD: Command '$Y[1]' does not exist!" && ERROR=1
       else
-        echo "Tim wants to use '$A[1]' but can't find it!
+        echo "Tim wants to use '$Y[1]' but can't find it!
 
 Install it or specify other command in your ~/.timrc file.
 Read the file timrc.example for more information."
@@ -132,7 +132,7 @@ Read the file timrc.example for more information."
 
     if [[ $FILE_ERROR == 1 ]]; then
       if [[ $1 == debug ]]; then
-        echo "Can't find the default audio files!" && ERROR=1
+        echo "Tim can't find the default audio files!" && ERROR=1
       else
         echo "Tim can't find the default audio files!
 
@@ -145,10 +145,10 @@ Read the file timrc.example for more information."
   fi
 
   for X in $CMD_SETTINGS; do
-    B=(${(zP)X}) # Puts the value of the current variable into an array.
+    Y=(${(zP)X}) # Puts the value of the current variable into an array.
 
-    if ! type -p $B[1] >& /dev/null; then # Checks if command exist.
-      echo "$X: Command '$B[1]' doesn't exist!" && ERROR=1
+    if ! type -p $Y[1] >& /dev/null; then # Checks if command exist.
+      echo "$X: Command '$Y[1]' does not exist!" && ERROR=1
     fi
   done
 
@@ -378,7 +378,12 @@ debug() {
 
   # Loop thru all settings and print them out.
   for X in $CMD_SETTINGS; do
-    echo " $X: ${(P)X}"
+    echo -n " $X: "
+    if [ -z ${(P)X} ]; then
+      echo "Default audio file not found!"
+    else
+      echo ${(P)X}
+    fi
   done
 
   for X in $RPT_SETTINGS; do
