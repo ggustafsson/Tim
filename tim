@@ -29,7 +29,7 @@
 # Git: git://github.com/ggustafsson/Tim.git                                  #
 ##############################################################################
 
-VERSION=1.1.6
+VERSION=1.1.7
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -41,7 +41,8 @@ INT_SETTINGS=(INTERVAL POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
 ##############################################################################
 # CONFIGURATION SECTION                                                      #
 ##############################################################################
-[ -f ~/.timrc ] && source ~/.timrc # Lazy fix. This is probably temporary.
+[ -r ~/.timrc ] && source ~/.timrc # Lazy fix. This is probably temporary.
+                                   # EDIT: I lied. Not temporary at all ;)
 
 if [[ $OSTYPE == darwin* ]]; then
   DEFAULT_CMD=afplay # Comes with Mac OS X.
@@ -112,7 +113,7 @@ fi
 ##############################################################################
 # VALIDATE SETTINGS SECTION                                                  #
 ##############################################################################
-function validate_settings {
+validate_settings() {
   if [[ $USE_DEFAULT_CMD == 1 ]]; then
     A=(${(z)DEFAULT_CMD}) # Puts the value of DEFAULT_CMD into an array.
 
@@ -172,12 +173,12 @@ Read the file timrc.example for more information."
 ##############################################################################
 # INFORMATION SECTION                                                        #
 ##############################################################################
-function usage {
+usage() {
   echo "Usage: $FILENAME [OPTION]... [NUMBER]...
 Try '--help' for more information."
 }
 
-function help {
+help() {
   echo "Usage: $FILENAME [OPTION]... [NUMBER]...
 
   [NUMBER]                   Wait [NUMBER] minutes before starting alarm.
@@ -203,7 +204,7 @@ Configuration:
   Read the file timrc.example for more information."
 }
 
-function version {
+version() {
   echo "Tim (Timer Script) $VERSION
 
 Web: https://github.com/ggustafsson/Tim
@@ -217,7 +218,7 @@ Released under the BSD 2-Clause license."
 ##############################################################################
 # TIMER MODE SECTION                                                         #
 ##############################################################################
-function timer {
+timer() {
   validate_settings
   [[ $ERROR == 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
@@ -247,7 +248,7 @@ function timer {
 ##############################################################################
 # INTERVAL MODE SECTION                                                      #
 ##############################################################################
-function interval {
+interval() {
   validate_settings
   [[ $ERROR == 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
@@ -307,7 +308,7 @@ function interval {
 ##############################################################################
 # POMODORO MODE SECTION                                                      #
 ##############################################################################
-function pomodoro {
+pomodoro() {
   validate_settings
   [[ $ERROR == 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
@@ -364,7 +365,7 @@ Start working now. Stop with Ctrl+C."
 ##############################################################################
 # DEBUG SECTION (DISPLAY VARIABLES)                                          #
 ##############################################################################
-function debug {
+debug() {
   echo "DEBUG MODE\n"
 
   validate_settings debug # Send argument debug to function for more output.
