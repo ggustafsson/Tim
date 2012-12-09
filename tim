@@ -25,8 +25,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 ##############################################################################
-# Web: https://github.com/ggustafsson/Tim                                    #
-# Git: git://github.com/ggustafsson/Tim.git                                  #
+#   Web: https://github.com/ggustafsson/Tim                                  #
+#   Git: git://github.com/ggustafsson/Tim.git                                #
+# Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
 VERSION=1.1.8
