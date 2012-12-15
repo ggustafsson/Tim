@@ -33,4 +33,3 @@ POMODORO_BREAK=5
  # The default time (in minutes) for the break period under pomodoro mode.
 POMODORO_STOP=4
  # How many times work and break mode should run before pomodoro mode ends.
-
