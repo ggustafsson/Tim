@@ -34,6 +34,8 @@ VERSION=1.1.8
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
+# Just a few arrays with the names of all different variable settings. Tim
+# uses this when checking settings, displaying debug info etc.
 CMD_SETTINGS=(TIMER_CMD WORK_CMD BREAK_CMD POMODORO_CMD)
 RPT_SETTINGS=(TIMER_REPEAT_CMD POMODORO_REPEAT_CMD)
 INT_SETTINGS=(INTERVAL POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
@@ -54,61 +56,62 @@ fi
 # If these variables are not found in ~/.timrc then set them. Tim checks for
 # audio files in this order: ~/.timrc, ~/.tim folder and then the script $PWD.
 if [ -z $TIMER_CMD ]; then
-  USE_DEFAULT_CMD=1
+  USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
 
   if [ -f ~/.tim/alarm.wav ]; then
     TIMER_CMD="$DEFAULT_CMD ~/.tim/alarm.wav"
   elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
     TIMER_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/alarm.wav"
   else
-    FILE_ERROR=1
+    FILE_ERROR=1 # File doesn't exist so set this flag and warn.
   fi
 fi
 
 if [ -z $WORK_CMD ]; then
-  USE_DEFAULT_CMD=1
+  USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
 
   if [ -f ~/.tim/work.wav ]; then
     WORK_CMD="$DEFAULT_CMD ~/.tim/work.wav"
   elif [ -f $DIRECTORY/audio_files/work.wav ]; then
     WORK_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/work.wav"
   else
-    FILE_ERROR=1
+    FILE_ERROR=1 # File doesn't exist so set this flag and warn.
   fi
 fi
 
 if [ -z $BREAK_CMD ]; then
-  USE_DEFAULT_CMD=1
+  USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
 
   if [ -f ~/.tim/break.wav ]; then
     BREAK_CMD="$DEFAULT_CMD ~/.tim/break.wav"
   elif [ -f $DIRECTORY/audio_files/break.wav ]; then
     BREAK_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/break.wav"
   else
-    FILE_ERROR=1
+    FILE_ERROR=1 # File doesn't exist so set this flag and warn.
   fi
 fi
 
 if [ -z $POMODORO_CMD ]; then
-  USE_DEFAULT_CMD=1
+  USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
 
   if [ -f ~/.tim/alarm.wav ]; then
     POMODORO_CMD="$DEFAULT_CMD ~/.tim/alarm.wav"
   elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
     POMODORO_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/alarm.wav"
   else
-    FILE_ERROR=1
+    FILE_ERROR=1 # File doesn't exist so set this flag and warn.
   fi
 fi
 
-[ -z $TIMER_REPEAT_CMD    ] && TIMER_REPEAT_CMD=0
-[ -z $POMODORO_REPEAT_CMD ] && POMODORO_REPEAT_CMD=0
+# Check if custom settings are set or else set variables to default values.
+[ -z $TIMER_REPEAT_CMD    ] && TIMER_REPEAT_CMD=0    # Don't repeat
+[ -z $POMODORO_REPEAT_CMD ] && POMODORO_REPEAT_CMD=0 # Don't repeat
 
-[ -z $POMODORO_WORK  ] && POMODORO_WORK=25
-[ -z $POMODORO_BREAK ] && POMODORO_BREAK=5
-[ -z $POMODORO_STOP  ] && POMODORO_STOP=4
+[ -z $POMODORO_WORK  ] && POMODORO_WORK=25 # Minutes
+[ -z $POMODORO_BREAK ] && POMODORO_BREAK=5 # Minutes
+[ -z $POMODORO_STOP  ] && POMODORO_STOP=4  # Run X times
 
-[ -z $INTERVAL ] && INTERVAL=15
+[ -z $INTERVAL ] && INTERVAL=15 # Minutes
 
 
 ##############################################################################
@@ -132,7 +135,7 @@ Read the file timrc.example for more information."
     fi
 
     if [[ $FILE_ERROR == 1 ]]; then
-      if [[ $1 == debug ]]; then
+      if [[ $1 == debug ]]; then # Different output if debug mode is on.
         echo "Tim can't find the default audio files!" && ERROR=1
       else
         echo "Tim can't find the default audio files!
@@ -145,6 +148,7 @@ Read the file timrc.example for more information."
     fi
   fi
 
+  # Check through all the settings variables to see if the commands exists.
   for X in $CMD_SETTINGS; do
     Y=(${(zP)X}) # Puts the value of the current variable into an array.
 
@@ -238,10 +242,10 @@ timer() {
 
   if [[ $TIMER_REPEAT_CMD == 1 ]]; then
     while true; do
-      eval $TIMER_CMD
+      eval $TIMER_CMD # Execute TIMER_CMD and loop until terminating.
     done
   else
-    eval $TIMER_CMD
+    eval $TIMER_CMD # Execute TIMER_CMD.
   fi
 }
 
@@ -264,7 +268,7 @@ interval() {
   else
     MINUTES=$SPECIFIC_TIME
   fi
-  (( MINUTES_IN_SECONDS = $MINUTES * 60 ))
+  (( MINUTES_IN_SECONDS = $MINUTES * 60 )) # Convert minutes to seconds.
 
   if [[ $1 == reverse ]]; then
     CURRENT_MODE=break
@@ -377,7 +381,7 @@ debug() {
  VERSION: $VERSION
  DEFAULT_CMD: $DEFAULT_CMD"
 
-  # Loop thru all settings and print them out.
+  # Loop through all settings and print them out.
   for X in $CMD_SETTINGS; do
     echo -n " $X: "
     if [ -z ${(P)X} ]; then
