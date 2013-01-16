@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-VERSION=1.1.8
+VERSION=1.2
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -178,12 +178,9 @@ Read the file timrc.example for more information."
 ##############################################################################
 # INFORMATION SECTION                                                        #
 ##############################################################################
-usage() {
-  echo "Usage: $FILENAME [OPTION]... [NUMBER]...
-Try '--help' for more information."
-}
-
 help() {
+  [ ! -z $1 ] && echo "Invalid: $FILENAME $*\n"
+
   echo "Usage: $FILENAME [OPTION]... [NUMBER]...
 
   [NUMBER]                   Wait [NUMBER] minutes before starting alarm.
@@ -405,14 +402,14 @@ debug() {
 # OPTIONS AND EXECUTION SECTION                                              #
 ##############################################################################
 case $# in
-  0) usage ;;
+  0) help ;;
   1)
     case $1 in
       <->) # Check if $1 only contain numbers.
         if [[ $1 -gt 0 ]]; then
           timer $1 # Send argument $1 to the function.
         else
-          usage && return 1
+          help $* && return 1
         fi
       ;;
       -i  | --interval)  interval         ;;
@@ -422,7 +419,7 @@ case $# in
       -h  | --help)      help             ;;
       -v  | --version)   version          ;;
       *)
-        usage && return 1
+        help $* && return 1
       ;;
     esac
   ;;
@@ -432,18 +429,18 @@ case $# in
       if [[ $2 -gt 0 ]]; then # Check if integer is more than 0.
         interval $2 # Send argument $2 to the function.
       else
-        usage && return 1
+        help $* && return 1
       fi
     # Check if $1 is -ri or --rinterval and if $2 is integer.
     elif [[ $1 == (-ri|--rinterval) && $2 == <-> ]]; then
       if [[ $2 -gt 0 ]]; then # Check if integer is more than 0.
         interval reverse $2 # Send argument reverse and $2 to the function.
       else
-        usage && return 1
+        help $* && return 1
       fi
     else
-      usage && return 1
+      help $* && return 1
     fi
   ;;
-  *) usage && return 1 ;;
+  *) help $* && return 1 ;;
 esac
