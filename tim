@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-VERSION=1.2.1
+VERSION=1.2.2
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -118,7 +118,7 @@ fi
 # VALIDATE SETTINGS SECTION                                                  #
 ##############################################################################
 validate_settings() {
-  if [[ $USE_DEFAULT_CMD == 1 ]]; then
+  if [[ $USE_DEFAULT_CMD -eq 1 ]]; then
     Y=(${(z)DEFAULT_CMD}) # Puts the value of DEFAULT_CMD into an array.
 
     if ! type -p $Y[1] >& /dev/null; then # Checks if command exist.
@@ -134,7 +134,7 @@ Read the file timrc.example for more information."
       fi
     fi
 
-    if [[ $FILE_ERROR == 1 ]]; then
+    if [[ $FILE_ERROR -eq 1 ]]; then
       if [[ $1 == debug ]]; then # Different output if debug mode is on.
         echo "Tim can't find the default audio files!" && ERROR=1
       else
@@ -171,7 +171,7 @@ Read the file timrc.example for more information."
     fi
   done
 
-  [[ $1 == debug && $ERROR == 1 ]] && echo # echo if running debug mode.
+  [[ $1 == debug && $ERROR -eq 1 ]] && echo # echo if running debug mode.
 }
 
 
@@ -222,7 +222,7 @@ Released under the BSD 2-Clause license."
 ##############################################################################
 timer() {
   validate_settings
-  [[ $ERROR == 1 ]] && return 1 # Terminate if there's a problem with timrc.
+  [[ $ERROR -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
   (( MINUTES_IN_SECONDS = $1 * 60 )) # Convert minutes to seconds.
 
@@ -237,7 +237,7 @@ timer() {
   sleep $MINUTES_IN_SECONDS
   print -P "\n%B%F{red}ALARM SET OFF!%f%b"
 
-  if [[ $TIMER_REPEAT_CMD == 1 ]]; then
+  if [[ $TIMER_REPEAT_CMD -eq 1 ]]; then
     while true; do
       eval $TIMER_CMD # Execute TIMER_CMD and loop until terminating.
     done
@@ -252,7 +252,7 @@ timer() {
 ##############################################################################
 interval() {
   validate_settings
-  [[ $ERROR == 1 ]] && return 1 # Terminate if there's a problem with timrc.
+  [[ $ERROR -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
   if [[ $1 == reverse ]]; then
     SPECIFIC_TIME=$2
@@ -312,7 +312,7 @@ interval() {
 ##############################################################################
 pomodoro() {
   validate_settings
-  [[ $ERROR == 1 ]] && return 1 # Terminate if there's a problem with timrc.
+  [[ $ERROR -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
   # Convert minutes to seconds.
   (( POMODORO_WORK_IN_SECONDS  = $POMODORO_WORK  * 60 ))
@@ -354,7 +354,7 @@ Start working now. Stop with Ctrl+C."
   sleep $MINUTES_IN_SECONDS
   echo "\nWorking session is over!"
 
-  if [[ $POMODORO_REPEAT_CMD == 1 ]]; then
+  if [[ $POMODORO_REPEAT_CMD -eq 1 ]]; then
     while true; do
       eval $POMODORO_CMD # Execute POMODORO_CMD and loop until terminating.
     done
