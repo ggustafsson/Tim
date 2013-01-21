@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-VERSION=1.2
+VERSION=1.2.1
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -44,7 +44,7 @@ INT_SETTINGS=(INTERVAL POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
 ##############################################################################
 # CONFIGURATION SECTION                                                      #
 ##############################################################################
-[ -r ~/.timrc ] && source ~/.timrc # Lazy fix. This is probably temporary.
+[[ -r ~/.timrc ]] && source ~/.timrc # Lazy fix. This is probably temporary.
                                    # EDIT: I lied. Not temporary at all ;)
 
 if [[ $OSTYPE == darwin* ]]; then
@@ -55,48 +55,48 @@ fi
 
 # If these variables are not found in ~/.timrc then set them. Tim checks for
 # audio files in this order: ~/.timrc, ~/.tim folder and then the script $PWD.
-if [ -z $TIMER_CMD ]; then
+if [[ -z $TIMER_CMD ]]; then
   USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
 
-  if [ -f ~/.tim/alarm.wav ]; then
+  if [[ -f ~/.tim/alarm.wav ]]; then
     TIMER_CMD="$DEFAULT_CMD ~/.tim/alarm.wav"
-  elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
+  elif [[ -f $DIRECTORY/audio_files/alarm.wav ]]; then
     TIMER_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/alarm.wav"
   else
     FILE_ERROR=1 # File doesn't exist so set this flag and warn.
   fi
 fi
 
-if [ -z $WORK_CMD ]; then
+if [[ -z $WORK_CMD ]]; then
   USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
 
-  if [ -f ~/.tim/work.wav ]; then
+  if [[ -f ~/.tim/work.wav ]]; then
     WORK_CMD="$DEFAULT_CMD ~/.tim/work.wav"
-  elif [ -f $DIRECTORY/audio_files/work.wav ]; then
+  elif [[ -f $DIRECTORY/audio_files/work.wav ]]; then
     WORK_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/work.wav"
   else
     FILE_ERROR=1 # File doesn't exist so set this flag and warn.
   fi
 fi
 
-if [ -z $BREAK_CMD ]; then
+if [[ -z $BREAK_CMD ]]; then
   USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
 
-  if [ -f ~/.tim/break.wav ]; then
+  if [[ -f ~/.tim/break.wav ]]; then
     BREAK_CMD="$DEFAULT_CMD ~/.tim/break.wav"
-  elif [ -f $DIRECTORY/audio_files/break.wav ]; then
+  elif [[ -f $DIRECTORY/audio_files/break.wav ]]; then
     BREAK_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/break.wav"
   else
     FILE_ERROR=1 # File doesn't exist so set this flag and warn.
   fi
 fi
 
-if [ -z $POMODORO_CMD ]; then
+if [[ -z $POMODORO_CMD ]]; then
   USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
 
-  if [ -f ~/.tim/alarm.wav ]; then
+  if [[ -f ~/.tim/alarm.wav ]]; then
     POMODORO_CMD="$DEFAULT_CMD ~/.tim/alarm.wav"
-  elif [ -f $DIRECTORY/audio_files/alarm.wav ]; then
+  elif [[ -f $DIRECTORY/audio_files/alarm.wav ]]; then
     POMODORO_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/alarm.wav"
   else
     FILE_ERROR=1 # File doesn't exist so set this flag and warn.
@@ -104,14 +104,14 @@ if [ -z $POMODORO_CMD ]; then
 fi
 
 # Check if custom settings are set or else set variables to default values.
-[ -z $TIMER_REPEAT_CMD    ] && TIMER_REPEAT_CMD=0    # Don't repeat
-[ -z $POMODORO_REPEAT_CMD ] && POMODORO_REPEAT_CMD=0 # Don't repeat
+[[ -z $TIMER_REPEAT_CMD    ]] && TIMER_REPEAT_CMD=0    # Don't repeat
+[[ -z $POMODORO_REPEAT_CMD ]] && POMODORO_REPEAT_CMD=0 # Don't repeat
 
-[ -z $POMODORO_WORK  ] && POMODORO_WORK=25 # Minutes
-[ -z $POMODORO_BREAK ] && POMODORO_BREAK=5 # Minutes
-[ -z $POMODORO_STOP  ] && POMODORO_STOP=4  # Run X times
+[[ -z $POMODORO_WORK  ]] && POMODORO_WORK=25 # Minutes
+[[ -z $POMODORO_BREAK ]] && POMODORO_BREAK=5 # Minutes
+[[ -z $POMODORO_STOP  ]] && POMODORO_STOP=4  # Run X times
 
-[ -z $INTERVAL ] && INTERVAL=15 # Minutes
+[[ -z $INTERVAL ]] && INTERVAL=15 # Minutes
 
 
 ##############################################################################
@@ -179,7 +179,7 @@ Read the file timrc.example for more information."
 # INFORMATION SECTION                                                        #
 ##############################################################################
 help() {
-  [ ! -z $1 ] && echo "Invalid: $FILENAME $*\n"
+  [[ ! -z $1 ]] && echo "Invalid: $FILENAME $*\n"
 
   echo "Usage: $FILENAME [OPTION]... [NUMBER]...
 
@@ -260,7 +260,7 @@ interval() {
     SPECIFIC_TIME=$1
   fi
 
-  if [ -z $SPECIFIC_TIME ]; then
+  if [[ -z $SPECIFIC_TIME ]]; then
     MINUTES=$INTERVAL
   else
     MINUTES=$SPECIFIC_TIME
@@ -290,7 +290,7 @@ interval() {
   while true; do
     sleep $MINUTES_IN_SECONDS
 
-    [ -z $LINEBREAK ] && echo && LINEBREAK=0
+    [[ -z $LINEBREAK ]] && echo && LINEBREAK=0
 
     if [[ $CURRENT_MODE == work ]]; then
       print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
@@ -330,7 +330,7 @@ Start working now. Stop with Ctrl+C."
   while [[ $CURRENT_RUN -lt $POMODORO_STOP ]]; do
     sleep $MINUTES_IN_SECONDS
 
-    [ -z $LINEBREAK ] && echo && LINEBREAK=0
+    [[ -z $LINEBREAK ]] && echo && LINEBREAK=0
 
     if [[ $CURRENT_MODE == work ]]; then
       print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
@@ -381,7 +381,7 @@ debug() {
   # Loop through all settings and print them out.
   for X in $CMD_SETTINGS; do
     echo -n " $X: "
-    if [ -z ${(P)X} ]; then
+    if [[ -z ${(P)X} ]]; then
       echo "Default audio file not found!"
     else
       echo ${(P)X}
