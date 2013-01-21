@@ -45,7 +45,7 @@ INT_SETTINGS=(INTERVAL POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
 # CONFIGURATION SECTION                                                      #
 ##############################################################################
 [[ -r ~/.timrc ]] && source ~/.timrc # Lazy fix. This is probably temporary.
-                                   # EDIT: I lied. Not temporary at all ;)
+                                     # EDIT: I lied. Not temporary at all ;)
 
 if [[ $OSTYPE == darwin* ]]; then
   DEFAULT_CMD=afplay # Comes with Mac OS X.
