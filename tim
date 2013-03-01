@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-VERSION=1.2.3
+VERSION=1.2.4
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -117,7 +117,7 @@ fi
 ##############################################################################
 # VALIDATE SETTINGS SECTION                                                  #
 ##############################################################################
-function validate_settings() {
+function validate_settings {
   if [[ $USE_DEFAULT_CMD -eq 1 ]]; then
     Y=(${(z)DEFAULT_CMD}) # Puts the value of DEFAULT_CMD into an array.
 
@@ -178,7 +178,7 @@ Read the file timrc.example for more information."
 ##############################################################################
 # INFORMATION SECTION                                                        #
 ##############################################################################
-function help() {
+function help {
   [[ ! -z $1 ]] && echo "Invalid: $FILENAME $*\n"
 
   echo "Usage: $FILENAME [OPTION]... [NUMBER]...
@@ -206,7 +206,7 @@ Configuration:
   Read the file timrc.example for more information."
 }
 
-function version() {
+function version {
   echo "Tim (Timer Script) $VERSION
 
 Web: https://github.com/ggustafsson/Tim
@@ -220,7 +220,7 @@ Released under the BSD 2-Clause license."
 ##############################################################################
 # TIMER MODE SECTION                                                         #
 ##############################################################################
-function timer() {
+function timer {
   validate_settings
   [[ $ERROR -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
@@ -250,7 +250,7 @@ function timer() {
 ##############################################################################
 # INTERVAL MODE SECTION                                                      #
 ##############################################################################
-function interval() {
+function interval {
   validate_settings
   [[ $ERROR -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
@@ -310,7 +310,7 @@ function interval() {
 ##############################################################################
 # POMODORO MODE SECTION                                                      #
 ##############################################################################
-function pomodoro() {
+function pomodoro {
   validate_settings
   [[ $ERROR -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
@@ -367,7 +367,7 @@ Start working now. Stop with Ctrl+C."
 ##############################################################################
 # DEBUG SECTION (DISPLAY VARIABLES)                                          #
 ##############################################################################
-function debug() {
+function debug {
   echo "DEBUG MODE\n"
 
   validate_settings debug # Send argument debug to function for more output.
