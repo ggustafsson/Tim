@@ -148,7 +148,7 @@ Read the file timrc.example for more information."
     fi
   fi
 
-  # Check through all the settings variables to see if the commands exists.
+  # Check through all the settings to see if the commands exist.
   for X in $CMD_SETTINGS; do
     Y=(${(zP)X}) # Puts the value of the current variable into an array.
 
