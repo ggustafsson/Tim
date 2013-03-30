@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-VERSION=1.3
+VERSION=1.3.1
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -119,13 +119,13 @@ fi
 ##############################################################################
 function validate_settings {
   if [[ $USE_DEFAULT_CMD -eq 1 ]]; then
-    Y=(${(z)DEFAULT_CMD}) # Puts the value of DEFAULT_CMD into an array.
+    COMMAND=(${(z)DEFAULT_CMD}) # Puts the value of DEFAULT_CMD into an array.
 
-    if ! type -p $Y[1] >& /dev/null; then # Checks if command exist.
+    if ! type -p $COMMAND[1] >& /dev/null; then # Checks if command exist.
       if [[ $1 == debug ]]; then # Different output if debug mode is on.
-        echo "DEFAULT_CMD: Command '$Y[1]' does not exist!" && ERROR=1
+        echo "DEFAULT_CMD: Command '$COMMAND[1]' does not exist!" && ERROR=1
       else
-        echo "Tim wants to use '$Y[1]' but can't find it!
+        echo "Tim wants to use '$COMMAND[1]' but can't find it!
 
 Install it or specify other command in your ~/.timrc file.
 Read the file timrc.example for more information."
@@ -149,25 +149,25 @@ Read the file timrc.example for more information."
   fi
 
   # Check through all the settings to see if the commands exist.
-  for X in $CMD_SETTINGS; do
-    Y=(${(zP)X}) # Puts the value of the current variable into an array.
+  for SETTING in $CMD_SETTINGS; do
+    COMMAND=(${(zP)SETTING}) # Puts the value of the variable into an array.
 
-    if ! type -p $Y[1] >& /dev/null; then # Checks if command exist.
-      echo "$X: Command '$Y[1]' does not exist!" && ERROR=1
+    if ! type -p $COMMAND[1] >& /dev/null; then # Checks if command exist.
+      echo "$SETTING: Command '$COMMAND[1]' does not exist!" && ERROR=1
     fi
   done
 
-  for X in $RPT_SETTINGS; do
+  for SETTING in $RPT_SETTINGS; do
     # Checks if the settings only contain numbers and have a value of 0/1.
-    if [[ ! ${(P)X} == <-> || ${(P)X} != [0-1] ]]; then
-      echo "$X: Setting '${(P)X}' is not valid." && ERROR=1
+    if [[ ! ${(P)SETTING} == <-> || ${(P)SETTING} != [0-1] ]]; then
+      echo "$SETTING: Setting '${(P)SETTING}' is not valid." && ERROR=1
     fi
   done
 
-  for X in $INT_SETTINGS; do
+  for SETTING in $INT_SETTINGS; do
     # Checks if the settings only contain numbers and have a value above 0.
-    if [[ ! ${(P)X} == <-> || ${(P)X} -lt 1 ]]; then
-      echo "$X: Setting '${(P)X}' is not valid." && ERROR=1
+    if [[ ! ${(P)SETTING} == <-> || ${(P)SETTING} -lt 1 ]]; then
+      echo "$SETTING: Setting '${(P)SETTING}' is not valid." && ERROR=1
     fi
   done
 
@@ -402,21 +402,21 @@ function debug {
  DEFAULT_CMD: $DEFAULT_CMD"
 
   # Loop through all settings and print them out.
-  for X in $CMD_SETTINGS; do
-    echo -n " $X: "
-    if [[ -z ${(P)X} ]]; then
+  for SETTING in $CMD_SETTINGS; do
+    echo -n " $SETTING: "
+    if [[ -z ${(P)SETTING} ]]; then
       echo "Default audio file not found!"
     else
-      echo ${(P)X}
+      echo ${(P)SETTING}
     fi
   done
 
-  for X in $RPT_SETTINGS; do
-    echo " $X: ${(P)X}"
+  for SETTING in $RPT_SETTINGS; do
+    echo " $SETTING: ${(P)SETTING}"
   done
 
-  for X in $INT_SETTINGS; do
-    echo " $X: ${(P)X}"
+  for SETTING in $INT_SETTINGS; do
+    echo " $SETTING: ${(P)SETTING}"
   done
 }
 
