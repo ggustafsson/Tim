@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-VERSION=1.3.1
+VERSION=1.3.2
 FILENAME=$0:t # Get the current filename of the script.
 DIRECTORY=$0:A:h # Get the path of the directory the script is in.
 
@@ -362,7 +362,7 @@ Start working now. Stop with Ctrl+C."
       CURRENT_MODE=break
       MINUTES_IN_SECONDS=$POMODORO_BREAK_IN_SECONDS
     else
-      print -Pn "%B%F{red}START WORKING NOW!%f%b Press return when ready..."
+      print -Pn "%B%F{red}START WORKING NOW!%f%b Press 'Return' when ready to start..."
       eval $WORK_CMD &
       read WAIT_FOR_INPUT
 
