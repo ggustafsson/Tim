@@ -30,16 +30,16 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-VERSION=1.3.2
-FILENAME=$0:t # Get the current filename of the script.
-DIRECTORY=$0:A:h # Get the path of the directory the script is in.
+version=1.3.3
+filename=$0:t # Get the current filename of the script.
+directory=$0:A:h # Get the path of the directory the script is in.
 
 # Just a few arrays with the names of all different variable settings. Tim
 # uses this when checking settings, displaying debug info etc.
-CMD_SETTINGS=(TIMER_CMD WORK_CMD BREAK_CMD POMODORO_CMD)
-RPT_SETTINGS=(TIMER_REPEAT_CMD POMODORO_REPEAT_CMD)
-INT_SETTINGS=(INTERVAL POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
-
+cmd_settings=(timer_cmd work_cmd break_cmd pomodoro_cmd)
+rpt_settings=(timer_repeat_cmd pomodoro_repeat_cmd)
+int_settings=(interval pomodoro_work pomodoro_break pomodoro_stop)
+all_settings=($cmd_settings $rpt_settings $int_settings)
 
 ##############################################################################
 # CONFIGURATION SECTION                                                      #
@@ -47,131 +47,141 @@ INT_SETTINGS=(INTERVAL POMODORO_WORK POMODORO_BREAK POMODORO_STOP)
 [[ -r ~/.timrc ]] && source ~/.timrc # Lazy fix. This is probably temporary.
                                      # EDIT: I lied. Not temporary at all ;)
 
+# Check if any of the settings variables are capitalized. As of version 1.3.3
+# they should all be in lowercase instead.
+for setting in ${(U)all_settings}; do
+  if [[ ! -z ${(P)setting} ]]; then
+    echo "Old config variable detected!
+As of version 1.3.3 all variables must be lowercased! Exiting..."
+    exit
+  fi
+done
+
 if [[ $OSTYPE == darwin* ]]; then
-  DEFAULT_CMD=afplay # Comes with Mac OS X.
+  default_cmd=afplay # Comes with Mac OS X.
 else
-  DEFAULT_CMD="aplay -q" # Comes with alsa-utils.
+  default_cmd="aplay -q" # Comes with alsa-utils.
 fi
 
 # If these variables are not found in ~/.timrc then set them. Tim checks for
 # audio files in this order: ~/.timrc, ~/.tim folder and then the script $PWD.
-if [[ -z $TIMER_CMD ]]; then
-  USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
+if [[ -z $timer_cmd ]]; then
+  use_default_cmd=1 # If no user set command exist then set this flag.
 
   if [[ -f ~/.tim/alarm.wav ]]; then
-    TIMER_CMD="$DEFAULT_CMD ~/.tim/alarm.wav"
-  elif [[ -f $DIRECTORY/audio_files/alarm.wav ]]; then
-    TIMER_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/alarm.wav"
+    timer_cmd="$default_cmd ~/.tim/alarm.wav"
+  elif [[ -f $directory/audio_files/alarm.wav ]]; then
+    timer_cmd="$default_cmd $directory/audio_files/alarm.wav"
   else
-    FILE_ERROR=1 # File doesn't exist so set this flag and warn.
+    file_error=1 # File doesn't exist so set this flag and warn.
   fi
 fi
 
-if [[ -z $WORK_CMD ]]; then
-  USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
+if [[ -z $work_cmd ]]; then
+  use_default_cmd=1 # If no user set command exist then set this flag.
 
   if [[ -f ~/.tim/work.wav ]]; then
-    WORK_CMD="$DEFAULT_CMD ~/.tim/work.wav"
-  elif [[ -f $DIRECTORY/audio_files/work.wav ]]; then
-    WORK_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/work.wav"
+    work_cmd="$default_cmd ~/.tim/work.wav"
+  elif [[ -f $directory/audio_files/work.wav ]]; then
+    work_cmd="$default_cmd $directory/audio_files/work.wav"
   else
-    FILE_ERROR=1 # File doesn't exist so set this flag and warn.
+    file_error=1 # File doesn't exist so set this flag and warn.
   fi
 fi
 
-if [[ -z $BREAK_CMD ]]; then
-  USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
+if [[ -z $break_cmd ]]; then
+  use_default_cmd=1 # If no user set command exist then set this flag.
 
   if [[ -f ~/.tim/break.wav ]]; then
-    BREAK_CMD="$DEFAULT_CMD ~/.tim/break.wav"
-  elif [[ -f $DIRECTORY/audio_files/break.wav ]]; then
-    BREAK_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/break.wav"
+    break_cmd="$default_cmd ~/.tim/break.wav"
+  elif [[ -f $directory/audio_files/break.wav ]]; then
+    break_cmd="$default_cmd $directory/audio_files/break.wav"
   else
-    FILE_ERROR=1 # File doesn't exist so set this flag and warn.
+    file_error=1 # File doesn't exist so set this flag and warn.
   fi
 fi
 
-if [[ -z $POMODORO_CMD ]]; then
-  USE_DEFAULT_CMD=1 # If no user set command exist then set this flag.
+if [[ -z $pomodoro_cmd ]]; then
+  use_default_cmd=1 # If no user set command exist then set this flag.
 
   if [[ -f ~/.tim/alarm.wav ]]; then
-    POMODORO_CMD="$DEFAULT_CMD ~/.tim/alarm.wav"
-  elif [[ -f $DIRECTORY/audio_files/alarm.wav ]]; then
-    POMODORO_CMD="$DEFAULT_CMD $DIRECTORY/audio_files/alarm.wav"
+    pomodoro_cmd="$default_cmd ~/.tim/alarm.wav"
+  elif [[ -f $directory/audio_files/alarm.wav ]]; then
+    pomodoro_cmd="$default_cmd $directory/audio_files/alarm.wav"
   else
-    FILE_ERROR=1 # File doesn't exist so set this flag and warn.
+    file_error=1 # File doesn't exist so set this flag and warn.
   fi
 fi
 
 # Check if custom settings are set or else set variables to default values.
-[[ -z $TIMER_REPEAT_CMD    ]] && TIMER_REPEAT_CMD=0    # Don't repeat
-[[ -z $POMODORO_REPEAT_CMD ]] && POMODORO_REPEAT_CMD=0 # Don't repeat
+[[ -z $timer_repeat_cmd    ]] && timer_repeat_cmd=0    # Don't repeat.
+[[ -z $pomodoro_repeat_cmd ]] && pomodoro_repeat_cmd=0 # Don't repeat.
 
-[[ -z $POMODORO_WORK  ]] && POMODORO_WORK=25 # Minutes
-[[ -z $POMODORO_BREAK ]] && POMODORO_BREAK=5 # Minutes
-[[ -z $POMODORO_STOP  ]] && POMODORO_STOP=4  # Run X times
+[[ -z $pomodoro_work  ]] && pomodoro_work=25 # Minutes.
+[[ -z $pomodoro_break ]] && pomodoro_break=5 # Minutes.
+[[ -z $pomodoro_stop  ]] && pomodoro_stop=4  # Run X times.
 
-[[ -z $INTERVAL ]] && INTERVAL=15 # Minutes
+[[ -z $interval ]] && interval=15 # Minutes.
 
 
 ##############################################################################
 # VALIDATE SETTINGS SECTION                                                  #
 ##############################################################################
 function validate_settings {
-  if [[ $USE_DEFAULT_CMD -eq 1 ]]; then
-    COMMAND=(${(z)DEFAULT_CMD}) # Puts the value of DEFAULT_CMD into an array.
+  if [[ $use_default_cmd -eq 1 ]]; then
+    command=(${(z)default_cmd}) # Puts the value of default_cmd into an array.
 
-    if ! type -p $COMMAND[1] >& /dev/null; then # Checks if command exist.
+    if ! type -p $command[1] >& /dev/null; then # Checks if command exist.
       if [[ $1 == debug ]]; then # Different output if debug mode is on.
-        echo "DEFAULT_CMD: Command '$COMMAND[1]' does not exist!" && ERROR=1
+        echo "default_cmd: Command '$command[1]' does not exist!" && error=1
       else
-        echo "Tim wants to use '$COMMAND[1]' but can't find it!
+        echo "Tim wants to use '$command[1]' but can't find it!
 
 Install it or specify other command in your ~/.timrc file.
 Read the file timrc.example for more information."
 
-        ERROR=1 && return 1 # Set error flag and exit function.
+        error=1 && return 1 # Set error flag and exit function.
       fi
     fi
 
-    if [[ $FILE_ERROR -eq 1 ]]; then
+    if [[ $file_error -eq 1 ]]; then
       if [[ $1 == debug ]]; then # Different output if debug mode is on.
-        echo "Tim can't find the default audio files!" && ERROR=1
+        echo "Tim can't find the default audio files!" && error=1
       else
         echo "Tim can't find the default audio files!
 
 Put them in ~/.tim or specify other files in your ~/.timrc file.
 Read the file timrc.example for more information."
 
-        ERROR=1 && return 1 # Set error flag and exit function.
+        error=1 && return 1 # Set error flag and exit function.
       fi
     fi
   fi
 
   # Check through all the settings to see if the commands exist.
-  for SETTING in $CMD_SETTINGS; do
-    COMMAND=(${(zP)SETTING}) # Puts the value of the variable into an array.
+  for setting in $cmd_settings; do
+    command=(${(zP)setting}) # Puts the value of the variable into an array.
 
-    if ! type -p $COMMAND[1] >& /dev/null; then # Checks if command exist.
-      echo "$SETTING: Command '$COMMAND[1]' does not exist!" && ERROR=1
+    if ! type -p $command[1] >& /dev/null; then # Checks if command exist.
+      echo "$setting: Command '$command[1]' does not exist!" && error=1
     fi
   done
 
-  for SETTING in $RPT_SETTINGS; do
+  for setting in $rpt_settings; do
     # Checks if the settings only contain numbers and have a value of 0/1.
-    if [[ ! ${(P)SETTING} == <-> || ${(P)SETTING} != [0-1] ]]; then
-      echo "$SETTING: Setting '${(P)SETTING}' is not valid." && ERROR=1
+    if [[ ! ${(P)setting} == <-> || ${(P)setting} != [0-1] ]]; then
+      echo "$setting: Setting '${(P)setting}' is not valid." && error=1
     fi
   done
 
-  for SETTING in $INT_SETTINGS; do
+  for setting in $int_settings; do
     # Checks if the settings only contain numbers and have a value above 0.
-    if [[ ! ${(P)SETTING} == <-> || ${(P)SETTING} -lt 1 ]]; then
-      echo "$SETTING: Setting '${(P)SETTING}' is not valid." && ERROR=1
+    if [[ ! ${(P)setting} == <-> || ${(P)setting} -lt 1 ]]; then
+      echo "$setting: Setting '${(P)setting}' is not valid." && error=1
     fi
   done
 
-  [[ $1 == debug && $ERROR -eq 1 ]] && echo # echo if running debug mode.
+  [[ $1 == debug && $error -eq 1 ]] && echo # echo if running debug mode.
 }
 
 
@@ -179,9 +189,9 @@ Read the file timrc.example for more information."
 # INFORMATION SECTION                                                        #
 ##############################################################################
 function help {
-  [[ ! -z $1 ]] && echo "Invalid: $FILENAME $*\n"
+  [[ ! -z $1 ]] && echo "Invalid: $filename $*\n"
 
-  echo "Usage: $FILENAME [OPTION]... [NUMBER]... [HH:MM]...
+  echo "Usage: $filename [OPTION]... [NUMBER]... [HH:MM]...
 
   [NUMBER]                   Wait [NUMBER] minutes before starting alarm.
   [HH:MM]                    Wait until [HH:MM] before starting alarm.
@@ -197,11 +207,11 @@ function help {
 
 Examples:
 
-  $FILENAME 5      # Wait 5 minutes before starting alarm.
-  $FILENAME 09:35  # Wait until 09:35 before starting alarm.
-  $FILENAME -i 10  # Work for 10 minutes and pause for 10 minutes.
-  $FILENAME -i     # Same as above but use the timrc (or default) setting.
-  $FILENAME -p     # Pomodoro mode. Using timrc (or default) settings.
+  $filename 5      # Wait 5 minutes before starting alarm.
+  $filename 09:35  # Wait until 09:35 before starting alarm.
+  $filename -i 10  # Work for 10 minutes and pause for 10 minutes.
+  $filename -i     # Same as above but use the timrc (or default) setting.
+  $filename -p     # Pomodoro mode. Using timrc (or default) settings.
 
 Configuration:
 
@@ -209,7 +219,7 @@ Configuration:
 }
 
 function version {
-  echo "Tim (Timer Script) $VERSION
+  echo "Tim (Timer Script) $version
 
 Web: https://github.com/ggustafsson/Tim
 Git: git://github.com/ggustafsson/Tim.git
@@ -224,32 +234,32 @@ Released under the BSD 2-Clause license."
 ##############################################################################
 function timer {
   validate_settings
-  [[ $ERROR -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
+  [[ $error -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
   if [[ $1 == clock ]]; then
     # Use "strftime" instead of "date" because of portability issues.
     zmodload zsh/datetime
     if [[ $2 > $(date '+%H:%M') ]]; then
       # Find out how many seconds there are left until specific time of day.
-      MINUTES_IN_SECONDS=$(( $(strftime -r '%Y-%m-%d %H:%M' \
+      minutes_in_seconds=$(( $(strftime -r '%Y-%m-%d %H:%M' \
         "$(strftime '%Y-%m-%d' $EPOCHSECONDS) $2") - $EPOCHSECONDS ))
     else
       # Add 24 hours so you can specify time that is lower than current time.
-      MINUTES_IN_SECONDS=$(( $(strftime -r '%Y-%m-%d %H:%M' \
+      minutes_in_seconds=$(( $(strftime -r '%Y-%m-%d %H:%M' \
         "$(strftime '%Y-%m-%d' $[EPOCHSECONDS + (24 * 60) * 60]) $2") \
         - $EPOCHSECONDS ))
     fi
   else
-    MINUTES=$1
-    (( MINUTES_IN_SECONDS = $MINUTES * 60 )) # Convert minutes to seconds.
+    minutes=$1
+    (( minutes_in_seconds = $minutes * 60 )) # Convert minutes to seconds.
   fi
 
   echo -n "Starting timer. Waiting "
   if [[ $1 == clock ]]; then
     echo "until $2."
   else
-    echo -n "for $MINUTES "
-    if [[ $MINUTES -gt 1 ]]; then
+    echo -n "for $minutes "
+    if [[ $minutes -gt 1 ]]; then
       echo "minutes."
     else
       echo "minute."
@@ -257,15 +267,15 @@ function timer {
   fi
   echo "Stop with Ctrl+C."
 
-  sleep $MINUTES_IN_SECONDS
+  sleep $minutes_in_seconds
   print -P "\n%B%F{red}ALARM SET OFF!%f%b"
 
-  if [[ $TIMER_REPEAT_CMD -eq 1 ]]; then
+  if [[ $timer_repeat_cmd -eq 1 ]]; then
     while true; do
-      eval $TIMER_CMD # Execute TIMER_CMD and loop until terminating.
+      eval $timer_cmd # Execute timer_cmd and loop until terminating.
     done
   else
-    eval $TIMER_CMD # Execute TIMER_CMD.
+    eval $timer_cmd # Execute timer_cmd.
   fi
 }
 
@@ -275,35 +285,35 @@ function timer {
 ##############################################################################
 function interval {
   validate_settings
-  [[ $ERROR -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
+  [[ $error -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
   if [[ $1 == reverse ]]; then
-    SPECIFIC_TIME=$2
+    specific_time=$2
   else
-    SPECIFIC_TIME=$1
+    specific_time=$1
   fi
 
-  if [[ -z $SPECIFIC_TIME ]]; then
-    MINUTES=$INTERVAL
+  if [[ -z $specific_time ]]; then
+    minutes=$interval
   else
-    MINUTES=$SPECIFIC_TIME
+    minutes=$specific_time
   fi
-  (( MINUTES_IN_SECONDS = $MINUTES * 60 )) # Convert minutes to seconds.
+  (( minutes_in_seconds = $minutes * 60 )) # Convert minutes to seconds.
 
   if [[ $1 == reverse ]]; then
-    CURRENT_MODE=break
+    current_mode=break
   else
-    CURRENT_MODE=work
+    current_mode=work
   fi
 
-  echo -n "Starting timer. Interval of $MINUTES "
-  if [[ $MINUTES -gt 1 ]]; then
+  echo -n "Starting timer. Interval of $minutes "
+  if [[ $minutes -gt 1 ]]; then
     echo "minutes."
   else
     echo "minute."
   fi
   echo -n "Start "
-  if [[ $CURRENT_MODE == work ]]; then
+  if [[ $current_mode == work ]]; then
     echo -n "working"
   else
     echo -n "break"
@@ -311,20 +321,20 @@ function interval {
   echo " now. Stop with Ctrl+C."
 
   while true; do
-    sleep $MINUTES_IN_SECONDS
+    sleep $minutes_in_seconds
 
-    [[ -z $LINEBREAK ]] && echo && LINEBREAK=0
+    [[ -z $linebreak ]] && echo && linebreak=0
 
-    if [[ $CURRENT_MODE == work ]]; then
+    if [[ $current_mode == work ]]; then
       print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
-      eval $BREAK_CMD &
+      eval $break_cmd &
 
-      CURRENT_MODE=break
+      current_mode=break
     else
       print -P "%B%F{red}START WORKING NOW!%f%b"
-      eval $WORK_CMD &
+      eval $work_cmd &
 
-      CURRENT_MODE=work
+      current_mode=work
     fi
   done
 }
@@ -335,54 +345,54 @@ function interval {
 ##############################################################################
 function pomodoro {
   validate_settings
-  [[ $ERROR -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
+  [[ $error -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
   # Convert minutes to seconds.
-  (( POMODORO_WORK_IN_SECONDS  = $POMODORO_WORK  * 60 ))
-  (( POMODORO_BREAK_IN_SECONDS = $POMODORO_BREAK * 60 ))
+  (( pomodoro_work_in_seconds  = $pomodoro_work  * 60 ))
+  (( pomodoro_break_in_seconds = $pomodoro_break * 60 ))
 
-  CURRENT_MODE=work
-  CURRENT_RUN=1
-  MINUTES_IN_SECONDS=$POMODORO_WORK_IN_SECONDS
+  current_mode=work
+  current_run=1
+  minutes_in_seconds=$pomodoro_work_in_seconds
 
   echo "Starting timer. Pomodoro mode:
-Work $POMODORO_WORK min. Break $POMODORO_BREAK min. Stop after $POMODORO_STOP.
+Work $pomodoro_work min. Break $pomodoro_break min. Stop after $pomodoro_stop.
 
 Start working now. Stop with Ctrl+C."
 
-  while [[ $CURRENT_RUN -lt $POMODORO_STOP ]]; do
-    sleep $MINUTES_IN_SECONDS
+  while [[ $current_run -lt $pomodoro_stop ]]; do
+    sleep $minutes_in_seconds
 
-    [[ -z $LINEBREAK ]] && echo && LINEBREAK=0
+    [[ -z $linebreak ]] && echo && linebreak=0
 
-    if [[ $CURRENT_MODE == work ]]; then
+    if [[ $current_mode == work ]]; then
       print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
-      eval $BREAK_CMD &
+      eval $break_cmd &
 
-      CURRENT_MODE=break
-      MINUTES_IN_SECONDS=$POMODORO_BREAK_IN_SECONDS
+      current_mode=break
+      minutes_in_seconds=$pomodoro_break_in_seconds
     else
       print -Pn "%B%F{red}START WORKING NOW!%f%b Press 'Return' when ready to start..."
-      eval $WORK_CMD &
-      read WAIT_FOR_INPUT
+      eval $work_cmd &
+      read wait_for_input
 
-      CURRENT_MODE=work
-      MINUTES_IN_SECONDS=$POMODORO_WORK_IN_SECONDS
+      current_mode=work
+      minutes_in_seconds=$pomodoro_work_in_seconds
 
-      # Increment CURRENT_RUN so we can stop pomodoro mode at POMODORO_STOP.
-      (( CURRENT_RUN = $CURRENT_RUN + 1 ))
+      # Increment current_run so we can stop pomodoro mode at pomodoro_stop.
+      (( current_run = $current_run + 1 ))
     fi
   done
 
-  sleep $MINUTES_IN_SECONDS
+  sleep $minutes_in_seconds
   echo "\nWorking session is over!"
 
-  if [[ $POMODORO_REPEAT_CMD -eq 1 ]]; then
+  if [[ $pomodoro_repeat_cmd -eq 1 ]]; then
     while true; do
-      eval $POMODORO_CMD # Execute POMODORO_CMD and loop until terminating.
+      eval $pomodoro_cmd # Execute pomodoro_cmd and loop until terminating.
     done
   else
-    eval $POMODORO_CMD # Execute POMODORO_CMD.
+    eval $pomodoro_cmd # Execute pomodoro_cmd.
   fi
 }
 
@@ -395,28 +405,29 @@ function debug {
 
   validate_settings debug # Send argument debug to function for more output.
 
-  echo "VALUE OF ALL VARIABLES:
- FILENAME: $FILENAME
- DIRECTORY: $DIRECTORY
- VERSION: $VERSION
- DEFAULT_CMD: $DEFAULT_CMD"
+  echo "Value of all variables:
+
+filename = $filename
+directory = $directory
+version = $version
+default_cmd = $default_cmd"
 
   # Loop through all settings and print them out.
-  for SETTING in $CMD_SETTINGS; do
-    echo -n " $SETTING: "
-    if [[ -z ${(P)SETTING} ]]; then
+  for setting in $cmd_settings; do
+    echo -n "$setting = "
+    if [[ -z ${(P)setting} ]]; then
       echo "Default audio file not found!"
     else
-      echo ${(P)SETTING}
+      echo ${(P)setting}
     fi
   done
 
-  for SETTING in $RPT_SETTINGS; do
-    echo " $SETTING: ${(P)SETTING}"
+  for setting in $rpt_settings; do
+    echo "$setting = ${(P)setting}"
   done
 
-  for SETTING in $INT_SETTINGS; do
-    echo " $SETTING: ${(P)SETTING}"
+  for setting in $int_settings; do
+    echo "$setting = ${(P)setting}"
   done
 }
 

@@ -1,35 +1,40 @@
 # vim: ft=zsh
 
-###############################################################################
-# Change the variables after liking and move the file to ~/.timrc.            #
-#                                                                             #
-# Below are the default settings Tim uses when nothing is set in ~/.timrc.    #
-# Tim looks for audio in ~/.tim and $PWD/audio_files (Tim's directory).       #
-#                                                                             #
-# On GNU/Linux Tim uses "aplay -q" instead of "afplay" by default.            #
-###############################################################################
+##############################################################################
+# Change the variables after liking and move the file to ~/.timrc.           #
+#                                                                            #
+# Below are the default settings Tim uses when nothing is set in ~/.timrc.   #
+# Tim looks for audio in ~/.tim and $PWD/audio_files (Tim's directory).      #
+#                                                                            #
+# On GNU/Linux Tim uses "aplay -q" instead of "afplay" by default.           #
+##############################################################################
 
-TIMER_CMD="afplay ~/.tim/alarm.wav"
- # The command that executes when the normal countdown mode ends.
-TIMER_REPEAT_CMD=0
- # Set this to 1 if you want the command above to loop endlessly.
+# The command that executes when the normal countdown mode ends.
+timer_cmd="afplay ~/.tim/alarm.wav"
 
-INTERVAL=15
- # The default time (in minutes) for the interval mode.
+# Set this to 1 if you want the command above to loop endlessly.
+timer_repeat_cmd=0
 
-WORK_CMD="afplay ~/.tim/work.wav"
- # The command that executes when the work period starts.
-BREAK_CMD="afplay ~/.tim/break.wav"
- # The command that executes when the break period starts.
+# The default time (in minutes) for the interval mode.
+interval=15
 
-POMODORO_CMD="afplay ~/.tim/alarm.wav"
- # The command that executes when the pomodoro session is completed.
-POMODORO_REPEAT_CMD=0
- # Set this to 1 if you want the command above to loop endlessly.
+# The command that executes when the work period starts.
+work_cmd="afplay ~/.tim/work.wav"
 
-POMODORO_WORK=25
- # The default time (in minutes) for the work period under pomodoro mode.
-POMODORO_BREAK=5
- # The default time (in minutes) for the break period under pomodoro mode.
-POMODORO_STOP=4
- # How many times work and break mode should run before pomodoro mode ends.
+# The command that executes when the break period starts.
+break_cmd="afplay ~/.tim/break.wav"
+
+# The command that executes when the pomodoro session is completed.
+pomodoro_cmd="afplay ~/.tim/alarm.wav"
+
+# Set this to 1 if you want the command above to loop endlessly.
+pomodoro_repeat_cmd=0
+
+# The default time (in minutes) for the work period under pomodoro mode.
+pomodoro_work=25
+
+# The default time (in minutes) for the break period under pomodoro mode.
+pomodoro_break=5
+
+# How many times work and break mode should run before pomodoro mode ends.
+pomodoro_stop=4
