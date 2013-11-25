@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-version=1.3.5
+version=1.3.6
 filename=$0:t # Get the current filename of the script.
 directory=$0:A:h # Get the path of the directory the script is in.
 
@@ -51,8 +51,8 @@ all_settings=($cmd_settings $rpt_settings $int_settings)
 # they should all be in lowercase instead.
 for setting in ${(U)all_settings}; do
   if [[ ! -z ${(P)setting} ]]; then
-    echo "Old config variable detected!
-As of version 1.3.3 all variables must be lowercased! Exiting..."
+    echo 'Old config variable detected!
+As of version 1.3.3 all variables must be lowercased! Exiting...'
     exit
   fi
 done
@@ -133,33 +133,31 @@ function validate_settings {
 
     if ! type -p $command[1] >& /dev/null; then # Checks if command exist.
       if [[ $1 == debug ]]; then # Different output if debug mode is on.
-        echo "default_cmd: Command '${command[1]}' does not exist!"
+        echo "default_cmd: Command '${command[1]}' does not exist\!"
         error=1
       else
-        echo "Tim wants to use '${command[1]}' but can't find it!
+        echo "Tim wants to use '${command[1]}' but can't find it\!
 
 Install it or specify other command in your ~/.timrc file.
 Read the file timrc.example for more information."
 
-        # Set error flag and exit the function.
-        error=1
-        return 1
+        # Force quit the script when debug mode is not running.
+        exit 1
       fi
     fi
 
     if [[ $file_error -eq 1 ]]; then
       if [[ $1 == debug ]]; then # Different output if debug mode is on.
-        echo "Tim can't find the default audio files!"
+        echo "Tim can't find the default audio files\!"
         error=1
       else
-        echo "Tim can't find the default audio files!
+        echo "Tim can't find the default audio files\!
 
 Put them in ~/.tim or specify other files in your ~/.timrc file.
 Read the file timrc.example for more information."
 
-        # Set error flag and exit the function.
-        error=1
-        return 1
+        # Force quit the script when debug mode is not running.
+        exit 1
       fi
     fi
   fi
@@ -169,7 +167,7 @@ Read the file timrc.example for more information."
     command=(${(zP)setting}) # Puts the value of the variable into an array.
 
     if ! type -p $command[1] >& /dev/null; then # Checks if command exist.
-      echo "$setting: Command '${command[1]}' does not exist!"
+      echo "${setting}: Command '${command[1]}' does not exist\!"
       error=1
     fi
   done
@@ -177,7 +175,7 @@ Read the file timrc.example for more information."
   for setting in $rpt_settings; do
     # Checks if the settings only contain numbers and have a value of 0/1.
     if [[ ! ${(P)setting} == <-> || ${(P)setting} != [0-1] ]]; then
-      echo "$setting: Setting '${(P)setting}' is not valid."
+      echo "${setting}: Setting '${(P)setting}' is not valid."
       error=1
     fi
   done
@@ -185,12 +183,18 @@ Read the file timrc.example for more information."
   for setting in $int_settings; do
     # Checks if the settings only contain numbers and have a value above 0.
     if [[ ! ${(P)setting} == <-> || ${(P)setting} -lt 1 ]]; then
-      echo "$setting: Setting '${(P)setting}' is not valid."
+      echo "${setting}: Setting '${(P)setting}' is not valid."
       error=1
     fi
   done
 
-  [[ $1 == debug && $error -eq 1 ]] && echo # echo if running debug mode.
+  # If running debug mode and an error is encountered just print an empty
+  # line and continue. If not running debug mode then force quit the script.
+  if [[ $1 == debug && $error -eq 1 ]]; then
+    echo
+  elif [[ $error -eq 1 ]]; then
+    exit 1
+  fi
 }
 
 
@@ -229,7 +233,7 @@ Configuration:
 function help_quit {
   echo "Invalid: $filename $*\n"
   help
-  return 1
+  exit 1
 }
 
 function version {
@@ -248,7 +252,6 @@ Released under the BSD 2-Clause license."
 ##############################################################################
 function timer {
   validate_settings
-  [[ $error -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
   if [[ $1 == clock ]]; then
     # Use "strftime" instead of "date" because of portability issues.
@@ -282,7 +285,7 @@ function timer {
   echo "Stop with Ctrl+C."
 
   sleep $minutes_in_seconds
-  print -P "\n%B%F{red}ALARM SET OFF!%f%b"
+  print -P "\n%B%F{red}ALARM SET OFF\!%f%b"
 
   if [[ $timer_repeat_cmd -eq 1 ]]; then
     while true; do
@@ -299,7 +302,6 @@ function timer {
 ##############################################################################
 function interval {
   validate_settings
-  [[ $error -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
   if [[ $1 == reverse ]]; then
     specific_time=$2
@@ -343,12 +345,12 @@ function interval {
     fi
 
     if [[ $current_mode == work ]]; then
-      print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
+      print -P "%B%F{green}TAKE A LITTLE BREAK\!%f%b"
       eval $break_cmd &
 
       current_mode=break
     else
-      print -P "%B%F{red}START WORKING NOW!%f%b"
+      print -P "%B%F{red}START WORKING NOW\!%f%b"
       eval $work_cmd &
 
       current_mode=work
@@ -362,7 +364,6 @@ function interval {
 ##############################################################################
 function pomodoro {
   validate_settings
-  [[ $error -eq 1 ]] && return 1 # Terminate if there's a problem with timrc.
 
   # Convert minutes to seconds.
   (( pomodoro_work_in_seconds  = $pomodoro_work  * 60 ))
@@ -386,7 +387,7 @@ Start working now. Stop with Ctrl+C."
     fi
 
     if [[ $current_mode == work ]]; then
-      print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
+      print -P "%B%F{green}TAKE A LITTLE BREAK\!%f%b"
       eval $break_cmd &
 
       current_mode=break
@@ -405,7 +406,7 @@ Start working now. Stop with Ctrl+C."
   done
 
   sleep $minutes_in_seconds
-  echo "\nWorking session is over!"
+  echo "\nWorking session is over\!"
 
   if [[ $pomodoro_repeat_cmd -eq 1 ]]; then
     while true; do
@@ -436,7 +437,7 @@ default_cmd = $default_cmd"
   for setting in $cmd_settings; do
     echo -n "$setting = "
     if [[ -z ${(P)setting} ]]; then
-      echo "Default audio file not found!"
+      echo 'Default audio file not found!'
     else
       echo ${(P)setting}
     fi
