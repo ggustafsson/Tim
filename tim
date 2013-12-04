@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-version=1.3.6
+version=1.3.7
 filename=$0:t # Get the current filename of the script.
 directory=$0:A:h # Get the path of the directory the script is in.
 
@@ -51,8 +51,8 @@ all_settings=($cmd_settings $rpt_settings $int_settings)
 # they should all be in lowercase instead.
 for setting in ${(U)all_settings}; do
   if [[ ! -z ${(P)setting} ]]; then
-    echo 'Old config variable detected!
-As of version 1.3.3 all variables must be lowercased! Exiting...'
+    echo "Old config variable detected!
+As of version 1.3.3 all variables must be lowercased! Exiting..."
     exit
   fi
 done
@@ -133,10 +133,10 @@ function validate_settings {
 
     if ! type -p $command[1] >& /dev/null; then # Checks if command exist.
       if [[ $1 == debug ]]; then # Different output if debug mode is on.
-        echo "default_cmd: Command '${command[1]}' does not exist\!"
+        echo "default_cmd: Command '${command[1]}' does not exist!"
         error=1
       else
-        echo "Tim wants to use '${command[1]}' but can't find it\!
+        echo "Tim wants to use '${command[1]}' but can't find it!
 
 Install it or specify other command in your ~/.timrc file.
 Read the file timrc.example for more information."
@@ -148,10 +148,10 @@ Read the file timrc.example for more information."
 
     if [[ $file_error -eq 1 ]]; then
       if [[ $1 == debug ]]; then # Different output if debug mode is on.
-        echo "Tim can't find the default audio files\!"
+        echo "Tim can't find the default audio files!"
         error=1
       else
-        echo "Tim can't find the default audio files\!
+        echo "Tim can't find the default audio files!
 
 Put them in ~/.tim or specify other files in your ~/.timrc file.
 Read the file timrc.example for more information."
@@ -167,7 +167,7 @@ Read the file timrc.example for more information."
     command=(${(zP)setting}) # Puts the value of the variable into an array.
 
     if ! type -p $command[1] >& /dev/null; then # Checks if command exist.
-      echo "${setting}: Command '${command[1]}' does not exist\!"
+      echo "${setting}: Command '${command[1]}' does not exist!"
       error=1
     fi
   done
@@ -285,7 +285,7 @@ function timer {
   echo "Stop with Ctrl+C."
 
   sleep $minutes_in_seconds
-  print -P "\n%B%F{red}ALARM SET OFF\!%f%b"
+  print -P "\n%B%F{red}ALARM SET OFF!%f%b"
 
   if [[ $timer_repeat_cmd -eq 1 ]]; then
     while true; do
@@ -345,12 +345,12 @@ function interval {
     fi
 
     if [[ $current_mode == work ]]; then
-      print -P "%B%F{green}TAKE A LITTLE BREAK\!%f%b"
+      print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
       eval $break_cmd &
 
       current_mode=break
     else
-      print -P "%B%F{red}START WORKING NOW\!%f%b"
+      print -P "%B%F{red}START WORKING NOW!%f%b"
       eval $work_cmd &
 
       current_mode=work
@@ -387,13 +387,13 @@ Start working now. Stop with Ctrl+C."
     fi
 
     if [[ $current_mode == work ]]; then
-      print -P "%B%F{green}TAKE A LITTLE BREAK\!%f%b"
+      print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
       eval $break_cmd &
 
       current_mode=break
       minutes_in_seconds=$pomodoro_break_in_seconds
     else
-      print -Pn "%B%F{red}START WORKING NOW\!%f%b Press Return when ready..."
+      print -Pn "%B%F{red}START WORKING NOW!%f%b Press Return when ready..."
       eval $work_cmd &
       read wait_for_input
 
@@ -406,7 +406,7 @@ Start working now. Stop with Ctrl+C."
   done
 
   sleep $minutes_in_seconds
-  echo "\nWorking session is over\!"
+  echo "\nWorking session is over!"
 
   if [[ $pomodoro_repeat_cmd -eq 1 ]]; then
     while true; do
@@ -437,7 +437,7 @@ default_cmd = $default_cmd"
   for setting in $cmd_settings; do
     echo -n "$setting = "
     if [[ -z ${(P)setting} ]]; then
-      echo 'Default audio file not found!'
+      echo "Default audio file not found!"
     else
       echo ${(P)setting}
     fi
