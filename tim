@@ -131,7 +131,7 @@ function validate_settings {
   if [[ $use_default_cmd -eq 1 ]]; then
     command=(${(z)default_cmd}) # Puts the value of default_cmd into an array.
 
-    if ! type -p $command[1] >& /dev/null; then # Checks if command exist.
+    if ! type -p $command[1] &> /dev/null; then # Checks if command exist.
       if [[ $1 == debug ]]; then # Different output if debug mode is on.
         echo "default_cmd: Command '${command[1]}' does not exist!"
         error=1
@@ -166,7 +166,7 @@ Read the file timrc.example for more information."
   for setting in $cmd_settings; do
     command=(${(zP)setting}) # Puts the value of the variable into an array.
 
-    if ! type -p $command[1] >& /dev/null; then # Checks if command exist.
+    if ! type -p $command[1] &> /dev/null; then # Checks if command exist.
       echo "${setting}: Command '${command[1]}' does not exist!"
       error=1
     fi
