@@ -472,8 +472,11 @@ function countdown {
 
   # This is a hack that catches all input and makes sure that it can't go
   # forward to the next step. If i don't catch all input here (input that is
-  # hidden from the screen) then that input will be entered later on when i
-  # use the "read" to listen for a return key.
+  # hidden from the screen) then that input will be entered later on. Lets say
+  # i type in "blabla<Return>" during the countdown phase then that input will
+  # be either entered in a wait for input phase that comes afterwards and mess
+  # everything up or if the script is at its end then the command "blabla"
+  # would be executed in the terminal!
   while true; do
     read -t 1 catch_unwanted_input || break
   done
