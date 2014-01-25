@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-# Copyright (c) 2013, Göran Gustafsson. All rights reserved.
+# Copyright (c) 2014, Göran Gustafsson. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-version=1.3.7
+version=1.4
 filename=$0:t # Get the current filename of the script.
 directory=$0:A:h # Get the path of the directory the script is in.
 
@@ -256,6 +256,7 @@ function timer {
   if [[ $1 == clock ]]; then
     # Use "strftime" instead of "date" because of portability issues.
     zmodload zsh/datetime
+
     if [[ $2 > $(date '+%H:%M') ]]; then
       # Find out how many seconds there are left until specific time of day.
       minutes_in_seconds=$(( $(strftime -r '%Y-%m-%d %H:%M' \
@@ -268,12 +269,11 @@ function timer {
     fi
   else
     minutes=$1
-    (( minutes_in_seconds = $minutes * 60 )) # Convert minutes to seconds.
   fi
 
   echo -n "Starting timer. Waiting "
   if [[ $1 == clock ]]; then
-    echo "until $2."
+    echo "until ${2}.\nWarning: hibernating will break timer."
   else
     echo -n "for $minutes "
     if [[ $minutes -gt 1 ]]; then
@@ -284,8 +284,15 @@ function timer {
   fi
   echo "Stop with Ctrl+C."
 
-  sleep $minutes_in_seconds
-  print -P "\n%B%F{red}ALARM SET OFF!%f%b"
+  if [[ $1 == clock ]]; then
+    sleep $minutes_in_seconds
+    echo
+  else
+    echo
+    countdown $minutes
+  fi
+
+  print -P "%B%F{red}ALARM SET OFF!%f%b"
 
   if [[ $timer_repeat_cmd -eq 1 ]]; then
     while true; do
@@ -314,7 +321,6 @@ function interval {
   else
     minutes=$specific_time
   fi
-  (( minutes_in_seconds = $minutes * 60 )) # Convert minutes to seconds.
 
   if [[ $1 == reverse ]]; then
     current_mode=break
@@ -334,14 +340,16 @@ function interval {
   else
     echo -n "break"
   fi
-  echo " now. Stop with Ctrl+C."
+  echo " now. Stop with Ctrl+C.\n"
 
   while true; do
-    sleep $minutes_in_seconds
+    countdown $minutes
 
-    if [[ -z $linebreak ]]; then
-      echo
-      linebreak=0
+    # Reset the minutes variable after the countdown is finished.
+    if [[ -z $specific_time ]]; then
+      minutes=$interval
+    else
+      minutes=$specific_time
     fi
 
     if [[ $current_mode == work ]]; then
@@ -365,47 +373,43 @@ function interval {
 function pomodoro {
   validate_settings
 
-  # Convert minutes to seconds.
-  (( pomodoro_work_in_seconds  = $pomodoro_work  * 60 ))
-  (( pomodoro_break_in_seconds = $pomodoro_break * 60 ))
-
   current_mode=work
   current_run=1
-  minutes_in_seconds=$pomodoro_work_in_seconds
+  minutes=$pomodoro_work
 
   echo "Starting timer. Pomodoro mode:
 Work $pomodoro_work min. Break $pomodoro_break min. Stop after $pomodoro_stop.
 
-Start working now. Stop with Ctrl+C."
+Start working now. Stop with Ctrl+C.
+"
 
-  while [[ $current_run -lt $pomodoro_stop ]]; do
-    sleep $minutes_in_seconds
+  while [[ $current_run -le $pomodoro_stop ]]; do
+    countdown $minutes
 
-    if [[ -z $linebreak ]]; then
-      echo
-      linebreak=0
-    fi
+    # If this is the last run then break the loop here for an alternative end
+    # to the current mode.
+    [[ $current_run -eq $pomodoro_stop ]] && break
 
     if [[ $current_mode == work ]]; then
       print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
       eval $break_cmd &
 
       current_mode=break
-      minutes_in_seconds=$pomodoro_break_in_seconds
+      minutes=$pomodoro_break
     else
       print -Pn "%B%F{red}START WORKING NOW!%f%b Press Return when ready..."
       eval $work_cmd &
-      read wait_for_input
+      read -s wait_for_input # Don't display output on the screen.
+      echo # read -s makes things act odd so a newline must be echoed here.
 
       current_mode=work
-      minutes_in_seconds=$pomodoro_work_in_seconds
+      minutes=$pomodoro_work
 
       # Increment current_run so we can stop pomodoro mode at pomodoro_stop.
       (( current_run = $current_run + 1 ))
     fi
   done
 
-  sleep $minutes_in_seconds
   echo "\nWorking session is over!"
 
   if [[ $pomodoro_repeat_cmd -eq 1 ]]; then
@@ -450,6 +454,32 @@ default_cmd = $default_cmd"
   for setting in $int_settings; do
     echo "$setting = ${(P)setting}"
   done
+}
+
+
+##############################################################################
+# MISCELLANEOUS FUNCTIONS SECTION                                            #
+##############################################################################
+function countdown {
+  stty -echo # Hide all input from screen.
+
+  while [[ $minutes -gt 0 ]]; do
+    printf "\r\e[K" # Clear the whole line and start over.
+    echo -n "Countdown: ${minutes}m left."
+    sleep 60
+    (( minutes = $minutes - 1 ))
+  done
+
+  # This is a hack that catches all input and makes sure that it can't go
+  # forward to the next step. If i don't catch all input here (input that is
+  # hidden from the screen) then that input will be entered later on when i
+  # use the "read" to listen for a return key.
+  while true; do
+    read -t 1 catch_unwanted_input || break
+  done
+
+  stty echo # Enable input once again.
+  printf "\r\e[K" # Clear the whole line and start over.
 }
 
 
