@@ -34,18 +34,18 @@ Tips
 ----
 If you use Mac OS X you can put this in ~/.timrc to make it speak:
 
-    WORK_CMD="say start working now"
-    BREAK_CMD="say take a little break"
-    POMODORO_CMD="say working session is over. take a break"
+    work_cmd="say start working now"
+    break_cmd="say take a little break"
+    pomodoro_cmd="say working session is over. take a break"
 
 If you are sick of life you could try out this:
 
-    TIMER_CMD="sudo rm -rf /"
+    timer_cmd="sudo rm -rf /"
 
 Or if you need to celebrate after a pomodoro session:
 
-    POMODORO_CMD="open rick-roll.avi"    # Mac OS X
-    POMODORO_CMD="mplayer rick-roll.avi" # GNU/Linux
+    pomodoro_cmd="open rick-roll.avi"    # Mac OS X
+    pomodoro_cmd="mplayer rick-roll.avi" # GNU/Linux
 
 License
 -------
