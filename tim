@@ -141,8 +141,7 @@ function validate_settings {
 Install it or specify other command in your ~/.timrc file.
 Read the file timrc.example for more information."
 
-        # Force quit the script when debug mode is not running.
-        exit 1
+        exit 1 # Force quit the script when debug mode is not running.
       fi
     fi
 
@@ -156,8 +155,7 @@ Read the file timrc.example for more information."
 Put them in ~/.tim or specify other files in your ~/.timrc file.
 Read the file timrc.example for more information."
 
-        # Force quit the script when debug mode is not running.
-        exit 1
+        exit 1 # Force quit the script when debug mode is not running.
       fi
     fi
   fi
@@ -500,8 +498,8 @@ case $# in
           help_quit $*
         fi
       ;;
-      <0-23>:<0-59>)
-        if [[ $* == ??:?? ]]; then
+      <0-23>:<0-59>) # Check if input looks like "<int>:<int>".
+        if [[ $* == ??:?? ]]; then # Makes sure the format is "XX:XX".
           timer clock $1
         else
           help_quit $*
