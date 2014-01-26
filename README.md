@@ -15,9 +15,17 @@ It's really easy to play with Tim. Just run the script!
 
     ./tim --help
 
+Installation
+------------
+All you need to do is move the script file **tim** to a directory in your
+shell $PATH and move the directory **audio_files** to **~/.tim** (this is only
+needed if you want to use the default commands/files). If you want to
+specificy your own commands then you can just move **timrc.example** to
+**~/.timrc** and edit the various variables.
+
 Configuration
 -------------
-Read the file **timrc.example** for more information.
+Read the commenst in the file **timrc.example** for more information.
 
 Dependencies
 ------------
