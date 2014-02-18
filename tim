@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-version=1.4.1
+version=1.4.2
 filename=$0:t # Get the current filename of the script.
 directory=$0:A:h # Get the path of the directory the script is in.
 
@@ -271,7 +271,7 @@ function timer {
 
   echo -n "Starting timer. Waiting "
   if [[ $1 == clock ]]; then
-    echo "until ${2}.\nWarning: hibernating will break timer."
+    echo "until ${2}.\nWarning: suspending computer will break timer."
   else
     echo -n "for $minutes "
     if [[ $minutes -gt 1 ]]; then
@@ -376,7 +376,8 @@ function pomodoro {
   minutes=$pomodoro_work
 
   echo "Starting timer. Pomodoro mode:
-Work $pomodoro_work min. Break $pomodoro_break min. Stop after $pomodoro_stop.
+- Work $pomodoro_work min. Break $pomodoro_break min. \
+Stop after ${pomodoro_stop}.
 
 Start working now. Stop with Ctrl+C.
 "
