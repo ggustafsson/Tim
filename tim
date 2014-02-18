@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-version=1.4
+version=1.4.1
 filename=$0:t # Get the current filename of the script.
 directory=$0:A:h # Get the path of the directory the script is in.
 
@@ -44,7 +44,7 @@ all_settings=($cmd_settings $rpt_settings $int_settings)
 ##############################################################################
 # CONFIGURATION SECTION                                                      #
 ##############################################################################
-[[ -r ~/.timrc ]] && source ~/.timrc # Lazy fix. This is probably temporary.
+[[ -f ~/.timrc ]] && source ~/.timrc # Lazy fix. This is probably temporary.
                                      # EDIT: I lied. Not temporary at all ;)
 
 # Check if any of the settings variables are capitalized. As of version 1.3.3
