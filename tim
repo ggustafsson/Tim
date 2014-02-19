@@ -26,7 +26,7 @@
 
 ##############################################################################
 #   Web: https://github.com/ggustafsson/Tim                                  #
-#   Git: git://github.com/ggustafsson/Tim.git                                #
+#   Git: https://github.com/ggustafsson/Tim.git                              #
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
@@ -238,7 +238,7 @@ function version {
   echo "Tim (Timer Script) $version
 
 Web: https://github.com/ggustafsson/Tim
-Git: git://github.com/ggustafsson/Tim.git
+Git: https://github.com/ggustafsson/Tim.git
 
 Written by Göran Gustafsson <gustafsson.g@gmail.com>.
 Released under the BSD 2-Clause license."
