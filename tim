@@ -30,16 +30,16 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-version=1.4.2
+version=1.4.3
 filename=$0:t # Get the current filename of the script.
 directory=$0:A:h # Get the path of the directory the script is in.
 
 # Just a few arrays with the names of all different variable settings. Tim
 # uses this when checking settings, displaying debug info etc.
 cmd_settings=(timer_cmd work_cmd break_cmd pomodoro_cmd)
-rpt_settings=(timer_repeat_cmd pomodoro_repeat_cmd)
+bool_settings=(timer_repeat_cmd pomodoro_repeat_cmd pomodoro_press_return)
 int_settings=(interval pomodoro_work pomodoro_break pomodoro_stop)
-all_settings=($cmd_settings $rpt_settings $int_settings)
+all_settings=($cmd_settings $bool_settings $int_settings)
 
 ##############################################################################
 # CONFIGURATION SECTION                                                      #
@@ -117,11 +117,13 @@ fi
 [[ -z $timer_repeat_cmd    ]] && timer_repeat_cmd=0    # Don't repeat.
 [[ -z $pomodoro_repeat_cmd ]] && pomodoro_repeat_cmd=0 # Don't repeat.
 
+[[ -z $interval ]] && interval=15 # Minutes.
+
+[[ -z $pomodoro_press_return ]] && pomodoro_press_return=1 # Wait for input.
+
 [[ -z $pomodoro_work  ]] && pomodoro_work=25 # Minutes.
 [[ -z $pomodoro_break ]] && pomodoro_break=5 # Minutes.
 [[ -z $pomodoro_stop  ]] && pomodoro_stop=4  # Run X times.
-
-[[ -z $interval ]] && interval=15 # Minutes.
 
 
 ##############################################################################
@@ -170,7 +172,7 @@ Read the file timrc.example for more information."
     fi
   done
 
-  for setting in $rpt_settings; do
+  for setting in $bool_settings; do
     # Checks if the settings only contain numbers and have a value of 0/1.
     if [[ ! ${(P)setting} == <-> || ${(P)setting} != [0-1] ]]; then
       echo "${setting}: Setting '${(P)setting}' is not valid."
@@ -396,10 +398,15 @@ Start working now. Stop with Ctrl+C.
       current_mode=break
       minutes=$pomodoro_break
     else
-      print -Pn "%B%F{red}START WORKING NOW!%f%b Press Return when ready..."
       eval $work_cmd &
-      read -s wait_for_input # Don't display output on the screen.
-      echo # read -s makes things act odd so a newline must be echoed here.
+
+      if [[ $pomodoro_press_return -eq 1 ]]; then
+        print -Pn "%B%F{red}START WORKING NOW!%f%b Press Return when ready..."
+        read -s wait_for_input # Don't display output on the screen.
+        echo # read -s makes things act odd so a newline must be echoed here.
+      else
+        print -P "%B%F{red}START WORKING NOW!%f%b"
+      fi
 
       current_mode=work
       minutes=$pomodoro_work
@@ -446,7 +453,7 @@ default_cmd = $default_cmd"
     fi
   done
 
-  for setting in $rpt_settings; do
+  for setting in $bool_settings; do
     echo "$setting = ${(P)setting}"
   done
 

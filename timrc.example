@@ -6,15 +6,17 @@
 # Below are the default settings Tim uses when nothing is set in ~/.timrc.   #
 # Tim looks for audio in ~/.tim and $PWD/audio_files (Tim's directory).      #
 #                                                                            #
+# Some integer values means minutes and others means on or off (1 or 0).     #
+#                                                                            #
 # On GNU/Linux Tim uses "aplay -q" instead of "afplay" by default.           #
 ##############################################################################
 
 # The command that executes when the normal countdown mode ends.
 timer_cmd="afplay ~/.tim/alarm.wav"
-# Set this to 1 if you want the command above to loop endlessly.
+# Should the $timer_cmd command loop until termination of Tim?
 timer_repeat_cmd=0
 
-# The default time (in minutes) for the interval mode.
+# The default time in minutes for the interval mode.
 interval=15
 
 # The command that executes when the work period starts.
@@ -24,12 +26,14 @@ break_cmd="afplay ~/.tim/break.wav"
 
 # The command that executes when the pomodoro session is completed.
 pomodoro_cmd="afplay ~/.tim/alarm.wav"
-# Set this to 1 if you want the command above to loop endlessly.
+# Should the $pomodoro_cmd command loop until termination of Tim?
 pomodoro_repeat_cmd=0
+# Should Tim wait for user input before starting work timer again?
+pomodoro_press_return=1
 
-# The default time (in minutes) for the work period under pomodoro mode.
+# The default time in minutes for the work period under pomodoro mode.
 pomodoro_work=25
-# The default time (in minutes) for the break period under pomodoro mode.
+# The default time in minutes for the break period under pomodoro mode.
 pomodoro_break=5
 # How many times work and break mode should run before pomodoro mode ends.
 pomodoro_stop=4
