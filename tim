@@ -125,7 +125,6 @@ fi
 [[ -z $pomodoro_break ]] && pomodoro_break=5 # Minutes.
 [[ -z $pomodoro_stop  ]] && pomodoro_stop=4  # Run X times.
 
-
 ##############################################################################
 # VALIDATE SETTINGS SECTION                                                  #
 ##############################################################################
@@ -197,7 +196,6 @@ Read the file timrc.example for more information."
   fi
 }
 
-
 ##############################################################################
 # INFORMATION SECTION                                                        #
 ##############################################################################
@@ -245,7 +243,6 @@ Git: https://github.com/ggustafsson/Tim.git
 Written by Göran Gustafsson <gustafsson.g@gmail.com>.
 Released under the BSD 2-Clause license."
 }
-
 
 ##############################################################################
 # TIMER MODE SECTION                                                         #
@@ -302,7 +299,6 @@ function timer {
     eval $timer_cmd # Execute timer_cmd.
   fi
 }
-
 
 ##############################################################################
 # INTERVAL MODE SECTION                                                      #
@@ -366,7 +362,6 @@ function interval {
   done
 }
 
-
 ##############################################################################
 # POMODORO MODE SECTION                                                      #
 ##############################################################################
@@ -427,7 +422,6 @@ Start working now. Stop with Ctrl+C.
   fi
 }
 
-
 ##############################################################################
 # DEBUG SECTION (DISPLAY VARIABLES)                                          #
 ##############################################################################
@@ -462,7 +456,6 @@ default_cmd = $default_cmd"
   done
 }
 
-
 ##############################################################################
 # MISCELLANEOUS FUNCTIONS SECTION                                            #
 ##############################################################################
@@ -490,7 +483,6 @@ function countdown {
   stty echo # Enable input once again.
   printf "\r\e[K" # Clear the whole line and start over.
 }
-
 
 ##############################################################################
 # OPTIONS AND EXECUTION SECTION                                              #
