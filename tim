@@ -37,7 +37,7 @@ directory=$0:A:h # Get the path of the directory the script is in.
 # Just a few arrays with the names of all different variable settings. Tim
 # uses this when checking settings, displaying debug info etc.
 cmd_settings=(timer_cmd work_cmd break_cmd pomodoro_cmd)
-bool_settings=(timer_repeat_cmd pomodoro_repeat_cmd pomodoro_press_return)
+bool_settings=(timer_repeat_cmd pomodoro_repeat_cmd pomodoro_press_return_for_work pomodoro_press_return_for_break)
 int_settings=(interval pomodoro_work pomodoro_break pomodoro_stop)
 all_settings=($cmd_settings $bool_settings $int_settings)
 
@@ -119,7 +119,8 @@ fi
 
 [[ -z $interval ]] && interval=15 # Minutes.
 
-[[ -z $pomodoro_press_return ]] && pomodoro_press_return=1 # Wait for input.
+[[ -z $pomodoro_press_return_for_work ]] && pomodoro_press_return_for_work=1 # Wait for input.
+[[ -z $pomodoro_press_return_for_break ]] && pomodoro_press_return_for_break=0 # Wait for input.
 
 [[ -z $pomodoro_work  ]] && pomodoro_work=25 # Minutes.
 [[ -z $pomodoro_break ]] && pomodoro_break=5 # Minutes.
@@ -387,15 +388,22 @@ Start working now. Stop with Ctrl+C.
     [[ $current_run -eq $pomodoro_stop ]] && break
 
     if [[ $current_mode == work ]]; then
-      print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
       eval $break_cmd &
+
+      if [[ $pomodoro_press_return_for_break -eq 1 ]]; then
+        print -Pn "%B%F{green}TAKE A LITTLE BREAK!%f%b Press Return when ready..."
+        read -s wait_for_input # Don't display output on the screen.
+        echo # read -s makes things act odd so a newline must be echoed here.
+      else
+        print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
+      fi
 
       current_mode=break
       minutes=$pomodoro_break
     else
       eval $work_cmd &
 
-      if [[ $pomodoro_press_return -eq 1 ]]; then
+      if [[ $pomodoro_press_return_for_work -eq 1 ]]; then
         print -Pn "%B%F{red}START WORKING NOW!%f%b Press Return when ready..."
         read -s wait_for_input # Don't display output on the screen.
         echo # read -s makes things act odd so a newline must be echoed here.
