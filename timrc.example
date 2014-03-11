@@ -29,7 +29,9 @@ pomodoro_cmd="afplay ~/.tim/alarm.wav"
 # Should the $pomodoro_cmd command loop until termination of Tim?
 pomodoro_repeat_cmd=0
 # Should Tim wait for user input before starting work timer again?
-pomodoro_press_return=1
+pomodoro_press_return_for_work=1
+# Should Tim wait for user input before starting break timer again?
+pomodoro_press_return_for_break=0
 
 # The default time in minutes for the work period under pomodoro mode.
 pomodoro_work=25
