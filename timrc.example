@@ -26,6 +26,9 @@ interval=15
 work_cmd="afplay ~/.tim/work.wav"
 # The command that executes when the break period starts.
 break_cmd="afplay ~/.tim/break.wav"
+# The command that executes when the long break period starts. Used instead of
+# pomodoro_cmd under looped pomodoro mode.
+long_break_cmd="afplay ~/.tim/break.wav"
 
 # The command that executes when the pomodoro session is completed.
 pomodoro_cmd="afplay ~/.tim/alarm.wav"
@@ -36,5 +39,8 @@ pomodoro_repeat_cmd=0
 pomodoro_work=25
 # The default time in minutes for the break period under pomodoro mode.
 pomodoro_break=5
+# The default time in minutes for the long break period under looped pomodoro
+# mode.
+pomodoro_long_break=15
 # How many times work and break mode should run before pomodoro mode ends.
 pomodoro_stop=4

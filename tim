@@ -30,15 +30,17 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-version=1.5.0
+version=1.6.0
 filename=$0:t # Get the current filename of the script.
 directory=$0:A:h # Get the path of the directory the script is in.
 
 # Just a few arrays with the names of all different variable settings. Tim
 # uses this when checking settings, displaying debug info etc.
-cmd_settings=(timer_cmd work_cmd break_cmd pomodoro_cmd)
 bool_settings=(timer_repeat_cmd pomodoro_repeat_cmd press_return)
-int_settings=(interval pomodoro_work pomodoro_break pomodoro_stop)
+cmd_settings=(timer_cmd work_cmd break_cmd long_break_cmd pomodoro_cmd)
+int_settings=(interval pomodoro_work pomodoro_break pomodoro_long_break \
+  pomodoro_stop)
+
 all_settings=($cmd_settings $bool_settings $int_settings)
 
 ##############################################################################
@@ -107,6 +109,18 @@ if [[ -z $break_cmd ]]; then
   fi
 fi
 
+if [[ -z $long_break_cmd ]]; then
+  use_default_cmd=1 # If no user set command exist then set this flag.
+
+  if [[ -f ~/.tim/break.wav ]]; then
+    long_break_cmd="$default_cmd ~/.tim/break.wav"
+  elif [[ -f $directory/audio_files/break.wav ]]; then
+    long_break_cmd="$default_cmd $directory/audio_files/break.wav"
+  else
+    file_error=1 # File doesn't exist so set this flag and warn.
+  fi
+fi
+
 if [[ -z $pomodoro_cmd ]]; then
   use_default_cmd=1 # If no user set command exist then set this flag.
 
@@ -127,9 +141,10 @@ fi
 [[ -z $timer_repeat_cmd    ]] && timer_repeat_cmd=0    # Don't repeat.
 [[ -z $pomodoro_repeat_cmd ]] && pomodoro_repeat_cmd=0 # Don't repeat.
 
-[[ -z $pomodoro_work  ]] && pomodoro_work=25 # Minutes.
-[[ -z $pomodoro_break ]] && pomodoro_break=5 # Minutes.
-[[ -z $pomodoro_stop  ]] && pomodoro_stop=4  # Run X times.
+[[ -z $pomodoro_work       ]] && pomodoro_work=25       # Minutes.
+[[ -z $pomodoro_break      ]] && pomodoro_break=5       # Minutes.
+[[ -z $pomodoro_long_break ]] && pomodoro_long_break=15 # Minutes.
+[[ -z $pomodoro_stop       ]] && pomodoro_stop=4        # Run X times.
 
 ##############################################################################
 # VALIDATE SETTINGS SECTION                                                  #
@@ -216,6 +231,8 @@ function help {
   -p, --pomodoro             Work X minutes and pause X minutes. Run X times.
                               (Default: 25 minutes work, 5 minutes break and
                                stop after 4 times.)
+  -lp, --lpomodoro           Neverending loop. Long break instead of stopping.
+                              (Default: 15 minutes long break.)
   -d, --debug                Display value of all variables and exit.
   -h, --help                 Display this help and exit.
   -v, --version              Output version information and exit.
@@ -336,11 +353,10 @@ function interval {
   else
     echo "minute."
   fi
-  echo -n "Start "
   if [[ $current_mode == work ]]; then
-    echo -n "working"
+    echo -n "Start working"
   else
-    echo -n "break"
+    echo -n "Take a break"
   fi
   echo " now. Stop with Ctrl+C.\n"
 
@@ -374,15 +390,48 @@ function interval {
 function pomodoro {
   validate_settings
 
-  current_mode=work
-  current_run=1
-  minutes=$pomodoro_work
-
   echo "Starting timer. Pomodoro mode:
 Work $pomodoro_work min. Break $pomodoro_break min. \
 Stop after ${pomodoro_stop}.
 Start working now. Stop with Ctrl+C.
 "
+
+  pomodoro_session
+
+  echo "\nPomodoro session is over!"
+
+  if [[ $pomodoro_repeat_cmd -eq 1 ]]; then
+    while true; do
+      eval $pomodoro_cmd # Execute pomodoro_cmd and loop until terminating.
+    done
+  else
+    eval $pomodoro_cmd # Execute pomodoro_cmd.
+  fi
+}
+
+function pomodoro_loop {
+  validate_settings
+
+  echo "Starting timer. Pomodoro mode:
+Work $pomodoro_work min. Break $pomodoro_break min. \
+Long break $pomodoro_long_break min. Long break after ${pomodoro_stop}.
+Start working now. Stop with Ctrl+C.
+"
+
+  while true; do
+    pomodoro_session
+    eval $long_break_cmd &
+    start_long_break
+    countdown $pomodoro_long_break
+    eval $work_cmd &
+    start_work
+  done
+}
+
+function pomodoro_session {
+  current_mode=work
+  current_run=1
+  minutes=$pomodoro_work
 
   while [[ $current_run -le $pomodoro_stop ]]; do
     countdown $minutes
@@ -408,16 +457,6 @@ Start working now. Stop with Ctrl+C.
       (( current_run = $current_run + 1 ))
     fi
   done
-
-  echo "\nWorking session is over!"
-
-  if [[ $pomodoro_repeat_cmd -eq 1 ]]; then
-    while true; do
-      eval $pomodoro_cmd # Execute pomodoro_cmd and loop until terminating.
-    done
-  else
-    eval $pomodoro_cmd # Execute pomodoro_cmd.
-  fi
 }
 
 ##############################################################################
@@ -458,6 +497,8 @@ default_cmd = $default_cmd"
 # MISCELLANEOUS FUNCTIONS SECTION                                            #
 ##############################################################################
 function countdown {
+  minutes=$1
+
   stty -echo # Hide all input from screen.
 
   while [[ $minutes -gt 0 ]]; do
@@ -484,11 +525,21 @@ function countdown {
 
 function start_break {
   if [[ $press_return -eq 1 ]]; then
-    print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
+    print -P "%B%F{green}TAKE A BREAK NOW!%f%b"
     print -Pn "Press 'Return' key when ready..."
     read -s wait_for_input # Don't display output on the screen.
   else
-    print -P "%B%F{green}TAKE A LITTLE BREAK!%f%b"
+    print -P "%B%F{green}TAKE A BREAK NOW!%f%b"
+  fi
+}
+
+function start_long_break {
+  if [[ $press_return -eq 1 ]]; then
+    print -P "%B%F{cyan}TAKE A LONG BREAK NOW!%f%b"
+    print -Pn "Press 'Return' key when ready..."
+    read -s wait_for_input # Don't display output on the screen.
+  else
+    print -P "%B%F{cyan}TAKE A LONG BREAK NOW!%f%b"
   fi
 }
 
@@ -526,6 +577,7 @@ case $# in
       -i  | --interval)  interval         ;;
       -ri | --rinterval) interval reverse ;;
       -p  | --pomodoro)  pomodoro         ;;
+      -lp | --lpomodoro) pomodoro_loop    ;;
       -d  | --debug)     debug            ;;
       -h  | --help)      help             ;;
       -v  | --version)   version          ;;
