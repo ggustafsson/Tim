@@ -46,6 +46,15 @@ If you use Mac OS X you can put this in ~/.timrc to make it speak:
     break_cmd="say take a little break"
     pomodoro_cmd="say working session is over. take a break"
 
+If you use Tim on multiple platforms you could put something like this inside
+of ~/.timrc:
+
+    if [[ $OSTYPE == darwin* ]]; then
+        # Settings here
+    else
+        # Settings here
+    fi
+
 If you are sick of life you could try out this:
 
     timer_cmd="sudo rm -rf /"
