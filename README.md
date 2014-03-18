@@ -17,15 +17,15 @@ It's really easy to play with Tim. Just run the script!
 
 Installation
 ------------
-All you need to do is move the script file **tim** to a directory in your
-shell $PATH and move the directory **audio_files** to **~/.tim** (this is only
-needed if you want to use the default commands/files). If you want to
-specificy your own commands then you can just move **timrc.example** to
-**~/.timrc** and edit the various variables.
+All you need to do is move the file **tim** to a directory in your shell path
+and move the directory **audio_files** to **~/.tim** (this is only needed if
+you want to use the default alarm commands and files). If you want to specify
+your own commands then you can just move **timrc.example** to **~/.timrc** and
+edit the various variables.
 
 Configuration
 -------------
-Read the commenst in the file **timrc.example** for more information.
+Read the comments in the file **timrc.example** for more information.
 
 Dependencies
 ------------
@@ -40,19 +40,18 @@ When using the default settings Tim depends on:
 
 Tips
 ----
-If you use Mac OS X you can put this in ~/.timrc to make it speak:
+If you use Mac OS X you can put this in **~/.timrc** to make it speak:
 
     work_cmd="say start working now"
     break_cmd="say take a little break"
     pomodoro_cmd="say working session is over. take a break"
 
-If you use Tim on multiple platforms you could put something like this inside
-of ~/.timrc:
+If you use Tim on multiple platforms you could use something like:
 
     if [[ $OSTYPE == darwin* ]]; then
-        # Settings here
+        # Mac OS X settings here
     else
-        # Settings here
+        # Everything else here
     fi
 
 If you are sick of life you could try out this:
