@@ -30,9 +30,9 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-version=1.6.1
-filename=$0:t # Get the current filename of the script.
-directory=$0:A:h # Get the path of the directory the script is in.
+version=1.6.2
+filename=${0:t} # Get the current filename of the script.
+directory=${0:A:h} # Get the path of the directory the script is in.
 
 # Just a few arrays with the names of all different variable settings. Tim
 # uses this when checking settings, displaying debug info etc.
@@ -78,8 +78,8 @@ if [[ -z $timer_cmd ]]; then
 
   if [[ -f ~/.tim/alarm.wav ]]; then
     timer_cmd="$default_cmd ~/.tim/alarm.wav"
-  elif [[ -f $directory/audio_files/alarm.wav ]]; then
-    timer_cmd="$default_cmd $directory/audio_files/alarm.wav"
+  elif [[ -f ${directory}/audio_files/alarm.wav ]]; then
+    timer_cmd="$default_cmd ${directory}/audio_files/alarm.wav"
   else
     file_error=1 # File doesn't exist so set this flag and warn.
   fi
@@ -90,8 +90,8 @@ if [[ -z $work_cmd ]]; then
 
   if [[ -f ~/.tim/work.wav ]]; then
     work_cmd="$default_cmd ~/.tim/work.wav"
-  elif [[ -f $directory/audio_files/work.wav ]]; then
-    work_cmd="$default_cmd $directory/audio_files/work.wav"
+  elif [[ -f ${directory}/audio_files/work.wav ]]; then
+    work_cmd="$default_cmd ${directory}/audio_files/work.wav"
   else
     file_error=1 # File doesn't exist so set this flag and warn.
   fi
@@ -102,8 +102,8 @@ if [[ -z $break_cmd ]]; then
 
   if [[ -f ~/.tim/break.wav ]]; then
     break_cmd="$default_cmd ~/.tim/break.wav"
-  elif [[ -f $directory/audio_files/break.wav ]]; then
-    break_cmd="$default_cmd $directory/audio_files/break.wav"
+  elif [[ -f ${directory}/audio_files/break.wav ]]; then
+    break_cmd="$default_cmd ${directory}/audio_files/break.wav"
   else
     file_error=1 # File doesn't exist so set this flag and warn.
   fi
@@ -114,8 +114,8 @@ if [[ -z $long_break_cmd ]]; then
 
   if [[ -f ~/.tim/break.wav ]]; then
     long_break_cmd="$default_cmd ~/.tim/break.wav"
-  elif [[ -f $directory/audio_files/break.wav ]]; then
-    long_break_cmd="$default_cmd $directory/audio_files/break.wav"
+  elif [[ -f ${directory}/audio_files/break.wav ]]; then
+    long_break_cmd="$default_cmd ${directory}/audio_files/break.wav"
   else
     file_error=1 # File doesn't exist so set this flag and warn.
   fi
@@ -126,8 +126,8 @@ if [[ -z $pomodoro_cmd ]]; then
 
   if [[ -f ~/.tim/alarm.wav ]]; then
     pomodoro_cmd="$default_cmd ~/.tim/alarm.wav"
-  elif [[ -f $directory/audio_files/alarm.wav ]]; then
-    pomodoro_cmd="$default_cmd $directory/audio_files/alarm.wav"
+  elif [[ -f ${directory}/audio_files/alarm.wav ]]; then
+    pomodoro_cmd="$default_cmd ${directory}/audio_files/alarm.wav"
   else
     file_error=1 # File doesn't exist so set this flag and warn.
   fi
@@ -153,7 +153,7 @@ function validate_settings {
   if [[ $use_default_cmd -eq 1 ]]; then
     command=(${(z)default_cmd}) # Puts the value of default_cmd into an array.
 
-    if ! type -p $command[1] &> /dev/null; then # Checks if command exist.
+    if ! type -p ${command[1]} &> /dev/null; then # Checks if command exist.
       if [[ $1 == debug ]]; then # Different output if debug mode is on.
         echo "default_cmd: Command '${command[1]}' does not exist!"
         error=1
@@ -186,7 +186,7 @@ Read the file timrc.example for more information."
   for setting in $cmd_settings; do
     command=(${(zP)setting}) # Puts the value of the variable into an array.
 
-    if ! type -p $command[1] &> /dev/null; then # Checks if command exist.
+    if ! type -p ${command[1]} &> /dev/null; then # Checks if command exist.
       echo "${setting}: Command '${command[1]}' does not exist!"
       error=1
     fi
@@ -252,7 +252,7 @@ Configuration:
 
 # If invalid flags and values are used then nag about it and quit.
 function help_quit {
-  echo "Invalid: $filename $*\n"
+  echo "Invalid: $filename ${*}\n"
   help
   exit 1
 }
