@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-version=1.6.0
+version=1.6.1
 filename=$0:t # Get the current filename of the script.
 directory=$0:A:h # Get the path of the directory the script is in.
 
@@ -235,7 +235,7 @@ function help {
                               (Default: 15 minutes long break.)
   -d, --debug                Display value of all variables and exit.
   -h, --help                 Display this help and exit.
-  -v, --version              Output version information and exit.
+  -v, --version              Display version information and exit.
 
 Examples:
 
@@ -247,7 +247,7 @@ Examples:
 
 Configuration:
 
-  Read the file timrc.example for more information."
+  Read the file timrc.example for information about configuration options."
 }
 
 # If invalid flags and values are used then nag about it and quit.
