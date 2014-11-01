@@ -30,7 +30,7 @@
 # Email: gustafsson.g@gmail.com                                              #
 ##############################################################################
 
-version=1.6.2
+version=1.6.3
 filename=${0:t} # Get the current filename of the script.
 directory=${0:A:h} # Get the path of the directory the script is in.
 
@@ -228,7 +228,7 @@ function help {
   -i, --interval [NUMBER]    Work [NUMBER] minutes and pause [NUMBER] minutes.
                               (Default: 15 minutes work and pause.)
   -ri, --rinterval [NUMBER]  Reverse. Start with break instead of work.
-  -p, --pomodoro             Work X minutes and pause X minutes. Run X times.
+  -p, --pomodoro             Work X minutes and pause Y minutes. Run Z times.
                               (Default: 25 minutes work, 5 minutes break and
                                stop after 4 times.)
   -lp, --lpomodoro           Neverending loop. Long break instead of stopping.
@@ -568,7 +568,7 @@ case $# in
         fi
       ;;
       <0-23>:<0-59>) # Check if input looks like "<int>:<int>".
-        if [[ $* == ??:?? ]]; then # Makes sure the format is "XX:XX".
+        if [[ $* == ??:?? ]]; then # Check if hour and minute is two digits.
           timer clock $1
         else
           help_quit $*
