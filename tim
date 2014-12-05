@@ -24,18 +24,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-##############################################################################
-#   Web: https://github.com/ggustafsson/Tim                                  #
-#   Git: https://github.com/ggustafsson/Tim.git                              #
-# Email: gustafsson.g@gmail.com                                              #
-##############################################################################
+###############################################################################
+#   Web: https://github.com/ggustafsson/Tim                                   #
+#   Git: https://github.com/ggustafsson/Tim.git                               #
+# Email: gustafsson.g@gmail.com                                               #
+###############################################################################
 
 version=1.6.3
 filename=${0:t} # Get the current filename of the script.
 directory=${0:A:h} # Get the path of the directory the script is in.
 
-# Just a few arrays with the names of all different variable settings. Tim
-# uses this when checking settings, displaying debug info etc.
+# Just a few arrays with the names of all different variable settings. Tim uses
+# this when checking settings, displaying debug info etc.
 bool_settings=(timer_repeat_cmd pomodoro_repeat_cmd press_return)
 cmd_settings=(timer_cmd work_cmd break_cmd long_break_cmd pomodoro_cmd)
 int_settings=(interval pomodoro_work pomodoro_break pomodoro_long_break \
@@ -43,9 +43,9 @@ int_settings=(interval pomodoro_work pomodoro_break pomodoro_long_break \
 
 all_settings=($cmd_settings $bool_settings $int_settings)
 
-##############################################################################
-# CONFIGURATION SECTION                                                      #
-##############################################################################
+###############################################################################
+# CONFIGURATION SECTION                                                       #
+###############################################################################
 [[ -f ~/.timrc ]] && source ~/.timrc # Lazy fix. This is probably temporary.
                                      # EDIT: I lied. Not temporary at all ;)
 
@@ -146,9 +146,9 @@ fi
 [[ -z $pomodoro_long_break ]] && pomodoro_long_break=15 # Minutes.
 [[ -z $pomodoro_stop       ]] && pomodoro_stop=4        # Run X times.
 
-##############################################################################
-# VALIDATE SETTINGS SECTION                                                  #
-##############################################################################
+###############################################################################
+# VALIDATE SETTINGS SECTION                                                   #
+###############################################################################
 function validate_settings {
   if [[ $use_default_cmd -eq 1 ]]; then
     command=(${(z)default_cmd}) # Puts the value of default_cmd into an array.
@@ -208,8 +208,8 @@ Read the file timrc.example for more information."
     fi
   done
 
-  # If running debug mode and an error is encountered just print an empty
-  # line and continue. If not running debug mode then force quit the script.
+  # If running debug mode and an error is encountered just print an empty line
+  # and continue. If not running debug mode then force quit the script.
   if [[ $1 == debug && $error -eq 1 ]]; then
     echo
   elif [[ $error -eq 1 ]]; then
@@ -217,9 +217,9 @@ Read the file timrc.example for more information."
   fi
 }
 
-##############################################################################
-# INFORMATION SECTION                                                        #
-##############################################################################
+###############################################################################
+# INFORMATION SECTION                                                         #
+###############################################################################
 function help {
   echo "Usage: $filename [OPTION]... [NUMBER]... [HH:MM]...
 
@@ -267,9 +267,9 @@ Written by Göran Gustafsson <gustafsson.g@gmail.com>.
 Released under the BSD 2-Clause license."
 }
 
-##############################################################################
-# TIMER MODE SECTION                                                         #
-##############################################################################
+###############################################################################
+# TIMER MODE SECTION                                                          #
+###############################################################################
 function timer {
   validate_settings
 
@@ -323,9 +323,9 @@ function timer {
   fi
 }
 
-##############################################################################
-# INTERVAL MODE SECTION                                                      #
-##############################################################################
+###############################################################################
+# INTERVAL MODE SECTION                                                       #
+###############################################################################
 function interval {
   validate_settings
 
@@ -384,9 +384,9 @@ function interval {
   done
 }
 
-##############################################################################
-# POMODORO MODE SECTION                                                      #
-##############################################################################
+###############################################################################
+# POMODORO MODE SECTION                                                       #
+###############################################################################
 function pomodoro {
   validate_settings
 
@@ -459,9 +459,9 @@ function pomodoro_session {
   done
 }
 
-##############################################################################
-# DEBUG SECTION (DISPLAY VARIABLES)                                          #
-##############################################################################
+###############################################################################
+# DEBUG SECTION (DISPLAY VARIABLES)                                           #
+###############################################################################
 function debug {
   echo "DEBUG MODE\n"
 
@@ -493,9 +493,9 @@ default_cmd = $default_cmd"
   done
 }
 
-##############################################################################
-# MISCELLANEOUS FUNCTIONS SECTION                                            #
-##############################################################################
+###############################################################################
+# MISCELLANEOUS FUNCTIONS SECTION                                             #
+###############################################################################
 function countdown {
   minutes=$1
 
@@ -553,9 +553,9 @@ function start_work {
   fi
 }
 
-##############################################################################
-# OPTIONS AND EXECUTION SECTION                                              #
-##############################################################################
+###############################################################################
+# OPTIONS AND EXECUTION SECTION                                               #
+###############################################################################
 case $# in
   0) help ;;
   1)
