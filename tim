@@ -1,6 +1,8 @@
 #!/usr/bin/env zsh
 
-# Copyright (c) 2015, Göran Gustafsson. All rights reserved.
+# Released under the BSD 3-Clause license.
+#
+# Copyright (c) 2022, Göran Gustafsson. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -31,7 +33,7 @@
 ###############################################################################
 #   Web: https://github.com/ggustafsson/Tim                                   #
 #   Git: https://github.com/ggustafsson/Tim.git                               #
-# Email: gustafsson.g@gmail.com                                               #
+# Email: gustafsson.g at gmail.com                                            #
 ###############################################################################
 
 version=1.6.3
@@ -70,7 +72,7 @@ Use 'press_return' instead of 'pomodoro_press_return'! Exiting..."
 fi
 
 if [[ $OSTYPE == darwin* ]]; then
-  default_cmd=afplay # Comes with Mac OS X.
+  default_cmd=afplay # Comes with macOS.
 else
   default_cmd="aplay -q" # Comes with alsa-utils.
 fi
@@ -267,7 +269,7 @@ function version {
 Web: https://github.com/ggustafsson/Tim
 Git: https://github.com/ggustafsson/Tim.git
 
-Written by Göran Gustafsson <gustafsson.g@gmail.com>.
+Written by Göran Gustafsson (gustafsson.g at gmail.com).
 Released under the BSD 3-Clause license."
 }
 

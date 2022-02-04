@@ -33,14 +33,14 @@ You need to have **Zsh** installed to run this.
 
 When using the default settings Tim depends on:
 
-- Mac OS X:
-  - **afplay** - Comes with Mac OS X.
-- GNU/Linux:
+- macOS:
+  - **afplay** - Comes with macOS.
+- Linux:
   - **aplay** - Comes with alsa-utils.
 
 Tips
 ----
-If you use Mac OS X you can put this in **~/.timrc** to make it speak:
+If you use macOS you can put this in **~/.timrc** to make it speak:
 
     work_cmd="say start working now"
     break_cmd="say take a little break"
@@ -49,7 +49,7 @@ If you use Mac OS X you can put this in **~/.timrc** to make it speak:
 If you use Tim on multiple platforms you could use something like:
 
     if [[ $OSTYPE == darwin* ]]; then
-        # Mac OS X settings here
+        # macOS settings here
     else
         # Everything else here
     fi
@@ -60,14 +60,14 @@ If you are sick of life you could try out this:
 
 Or if you need to celebrate after a pomodoro session:
 
-    pomodoro_cmd="open rick-roll.avi"    # Mac OS X
-    pomodoro_cmd="mplayer rick-roll.avi" # GNU/Linux
+    pomodoro_cmd="open rick-roll.avi"    # macOS
+    pomodoro_cmd="mplayer rick-roll.avi" # Linux
 
 License
 -------
 Released under the BSD 3-Clause License.
 
-    Copyright (c) 2015, Göran Gustafsson. All rights reserved.
+    Copyright (c) 2022, Göran Gustafsson. All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:

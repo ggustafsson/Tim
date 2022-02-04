@@ -8,7 +8,7 @@
 #                                                                             #
 # Some integer values means minutes and others means on or off (1 or 0).      #
 #                                                                             #
-# On GNU/Linux Tim uses "aplay -q" instead of "afplay" by default.            #
+# Under Linux Tim uses "aplay -q" instead of "afplay" by default.             #
 ###############################################################################
 
 # Should Tim wait for user input before starting work/break timer again?
