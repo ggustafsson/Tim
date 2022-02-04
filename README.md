@@ -1,7 +1,7 @@
 Tim (Timer Script)
 ==================
 
-![Preview](https://github.com/ggustafsson/Tim/raw/master/Preview.png)
+![Screenshot](https://github.com/ggustafsson/Project-Assets/raw/master/Tim/Screenshot.png)
 
 Description
 -----------
