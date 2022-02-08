@@ -237,7 +237,7 @@ function help {
   -p, --pomodoro             Work X minutes and pause Y minutes. Run Z times.
                               (Default: 25 minutes work, 5 minutes break and
                                stop after 4 times.)
-  -lp, --lpomodoro           Neverending loop. Long break instead of stopping.
+  -lp, --lpomodoro           Never-ending loop. Long break instead of stopping.
                               (Default: 15 minutes long break.)
   -d, --debug                Display value of all variables and exit.
   -h, --help                 Display this help and exit.
