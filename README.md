@@ -1,34 +1,33 @@
-Tim (Timer Script)
-==================
+# Tim (Timer Script)
 
 ![Screenshot](https://github.com/ggustafsson/Project-Assets/raw/master/Tim/Screenshot.png)
 
-Description
------------
+## Description
+
 Terminal countdown timer with several modes written in Zsh shell script.
 Currently Tim got a countdown timer, interval timer, pomodoro timer and magical
 powers.
 
-Usage
------
+## Usage
+
 It's really easy to play with Tim. Just run the script!
 
     ./tim --help
 
-Installation
-------------
+## Installation
+
 All you need to do is move the file **tim** to a directory in your shell path
 and move the directory **audio_files** to **~/.tim** (this is only needed if
 you want to use the default alarm commands and files). If you want to specify
 your own commands then you can just move **timrc.example** to **~/.timrc** and
 edit the various variables.
 
-Configuration
--------------
+## Configuration
+
 Read the comments in the file **timrc.example** for more information.
 
-Dependencies
-------------
+## Dependencies
+
 You need to have **Zsh** installed to run this.
 
 When using the default settings Tim depends on:
@@ -38,8 +37,8 @@ When using the default settings Tim depends on:
 - Linux:
   - **aplay** - Comes with alsa-utils.
 
-Tips
-----
+## Tips
+
 If you use macOS you can put this in **~/.timrc** to make it speak:
 
     work_cmd="say start working now"
@@ -63,8 +62,8 @@ Or if you need to celebrate after a pomodoro session:
     pomodoro_cmd="open rick-roll.avi"    # macOS
     pomodoro_cmd="mplayer rick-roll.avi" # Linux
 
-License
--------
+## License
+
 Released under the BSD 3-Clause License.
 
     Copyright (c) 2022, Göran Gustafsson. All rights reserved.
