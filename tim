@@ -36,7 +36,7 @@
 # Email: gustafsson.g at gmail.com                                            #
 ###############################################################################
 
-version=1.6.4
+version=1.6.5
 filename=${0:t} # Get current filename of script.
 directory=${0:A:h} # Get path of directory where script is located.
 
