@@ -55,22 +55,6 @@ all_settings=($cmd_settings $bool_settings $int_settings)
 [[ -f ~/.timrc ]] && source ~/.timrc # Lazy fix. This is probably temporary.
                                      # EDIT: I lied. Not temporary at all ;)
 
-# Check if any settings variables are capitalized. As of version 1.3.3 they
-# should all be in lowercase instead.
-for setting in ${(U)all_settings}; do
-  if [[ ! -z ${(P)setting} ]]; then
-    echo "Old config variable detected!
-As of version 1.3.3 all variables must be lowercased! Exiting..."
-    exit 1
-  fi
-done
-
-if [[ ! -z $pomodoro_press_return ]]; then
-  echo "Old config variable detected!
-Use 'press_return' instead of 'pomodoro_press_return'! Exiting..."
-  exit 1
-fi
-
 if [[ $OSTYPE == darwin* ]]; then
   default_cmd=afplay # Comes with macOS.
 else
